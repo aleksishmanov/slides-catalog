@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Общая память ИИ-агентов: факт становится фактом, когда его принял руководитель</title>
+<meta name="description" content="Статья: три PO-агента получили одну память организации. Факты сдают со ссылкой на источник, руководитель принимает их один раз — и их видят все. Что изменилось в ответах агентов и как это измеряется.">
+<link rel="canonical" href="https://slides.aleksishmanov.ru/cortex-po-agents/article/">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Каталог презентаций · Алексей Ишманов">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://slides.aleksishmanov.ru/cortex-po-agents/article/">
+<meta property="og:title" content="Общая память ИИ-агентов: факт становится фактом, когда его принял руководитель">
+<meta property="og:description" content="Статья: три PO-агента получили одну память организации. Факты сдают со ссылкой на источник, руководитель принимает их один раз — и их видят все. Что изменилось в ответах агентов и как это измеряется.">
+<meta property="og:image" content="https://slides.aleksishmanov.ru/cortex-po-agents/cover.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="720">
+<meta property="og:image:alt" content="Первый слайд презентации «Общая память ИИ-агентов»">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Общая память ИИ-агентов: факт становится фактом, когда его принял руководитель">
+<meta name="twitter:description" content="Три PO-агента получили одну память организации: факты сдают со ссылкой, руководитель принимает их один раз — и их видят все.">
+<meta name="twitter:image" content="https://slides.aleksishmanov.ru/cortex-po-agents/cover.png">
+<meta name="twitter:image:alt" content="Первый слайд презентации «Общая память ИИ-агентов»">
+<style>
+  /* Статья к колоде cortex-po-agents, текстом. Колонка статьи в айдентике каталога презентаций: бежевый лист, чёрный текст, синий акцент,
+     моноширинные подписи, карточки с жёсткой тенью — только там, где они несут смысл. */
+  :root {
+    --bg: #efeee8; --paper: #f7f6f1; --ink: #080808; --muted: #51514b; --line: #c9c8c2;
+    --blue: #2437ed; --red: #d8302a; --shadow: #080808;
+    --sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --bg: #141412; --paper: #1c1c19; --ink: #ecebe5; --muted: #a8a79f; --line: #3a3a35;
+    --blue: #8c9bff; --red: #ff7a72; --shadow: #000; color-scheme: dark } }
+  :root[data-theme="dark"] {
+    --bg: #141412; --paper: #1c1c19; --ink: #ecebe5; --muted: #a8a79f; --line: #3a3a35;
+    --blue: #8c9bff; --red: #ff7a72; --shadow: #000; color-scheme: dark }
+  * { box-sizing: border-box; }
+  body { margin: 0; -webkit-text-size-adjust: 100%; background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 18px; line-height: 1.6; }
+  .wrap { max-width: 720px; margin: 0 auto; padding-block: 48px 72px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .home { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--muted); text-decoration: none; display: inline-block; margin-bottom: 26px; }
+  .home:hover { color: var(--blue); }
+  .kicker { font-family: var(--mono); font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--blue); }
+  h1 { font-size: clamp(34px, 6vw, 52px); line-height: 1.05; letter-spacing: -.04em; font-weight: 800; margin: 14px 0 18px; text-wrap: balance; }
+  h1 em { font-style: normal; color: var(--blue); }
+  h2 { font-size: 26px; line-height: 1.15; letter-spacing: -.03em; font-weight: 800; margin: 44px 0 12px; text-wrap: balance; }
+  p { margin: 0 0 16px; }
+  .lead { font-size: 21px; line-height: 1.5; }
+  .meta { font-family: var(--mono); font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+  a { color: var(--blue); text-underline-offset: 3px; }
+  a:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+  ul, ol { margin: 0 0 18px; padding-left: 22px; }
+  li { margin-bottom: 8px; }
+  li::marker { color: var(--blue); font-weight: 700; }
+  .quote { border-left: 4px solid var(--blue); padding: 2px 0 2px 18px; font-size: 21px; line-height: 1.45; font-weight: 600; margin: 24px 0; }
+  /* реплики — чат до и после */
+  .chat { display: flex; flex-direction: column; gap: 10px; margin: 20px 0 24px; }
+  .msg { max-width: 92%; padding: 10px 14px; border: 1px solid var(--ink); background: var(--paper); font-size: 16px; line-height: 1.45; }
+  .msg small { display: block; font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+  .msg.me { align-self: flex-start; background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .msg.me small { color: var(--bg); opacity: .7; }
+  .msg.bot { align-self: flex-end; }
+  .msg.bad { box-shadow: 4px 4px 0 var(--red); border-color: var(--red); }
+  .msg.good { box-shadow: 4px 4px 0 var(--blue); border-color: var(--blue); }
+  /* путь факта */
+  .path { list-style: none; padding: 0; counter-reset: s; display: grid; gap: 10px; margin: 18px 0 24px; }
+  .path li { counter-increment: s; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 10px; margin: 0; }
+  .path li::before { content: counter(s); font-family: var(--mono); font-weight: 700; font-size: 15px; color: var(--blue); padding-top: 2px; }
+  .path b { display: block; }
+  /* таблица до/после */
+  .tbl { overflow-x: auto; margin: 18px 0 10px; border: 1px solid var(--ink); box-shadow: 6px 6px 0 var(--shadow); background: var(--paper); }
+  table { border-collapse: collapse; width: 100%; min-width: 480px; font-size: 16px; font-variant-numeric: tabular-nums; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+  tr:last-child td { border-bottom: none; }
+  td:first-child { color: var(--muted); }
+  td.up { color: var(--blue); font-weight: 600; }
+  .cap { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-bottom: 22px; }
+  .deck { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 40px;
+    border: 1px solid var(--ink); box-shadow: 6px 6px 0 var(--blue); background: var(--paper); padding: 16px 18px; text-decoration: none; color: var(--ink); }
+  .deck span { font-weight: 700; }
+  .deck small { display: block; font-family: var(--mono); font-size: 12px; color: var(--muted); font-weight: 500; margin-top: 2px; word-break: break-all; }
+  .deck i { font-style: normal; font-weight: 800; color: var(--blue); font-size: 22px; }
+  @media (max-width: 520px) { body { font-size: 17px; } .lead { font-size: 19px; } .quote { font-size: 19px; } h2 { font-size: 23px; } .msg { max-width: 100%; } }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <a class="home" href="/">← Каталог презентаций</a>
+  <p class="kicker">PO-агенты · общая память организации</p>
+  <h1>Общая память ИИ-агентов: <em>факт становится фактом, когда его принял руководитель</em></h1>
+  <p class="lead">У меня три PO-агента, по одному на команду. Каждый помнил организацию по-своему, и я тратил время на то, чтобы снова и снова их выравнивать. Теперь у них одна память, а новое знание попадает в неё только через мою приёмку.</p>
+  <div class="meta"><span>19 ноября 2026</span><span>5 минут чтения</span></div>
+
+  <h2>Три агента — три версии правды</h2>
+  <p>Я задал агентам одинаковый вопрос и получил три разных ответа.</p>
+  <div class="chat">
+    <div class="msg me"><small>Руководитель · всем троим</small>Какой адрес у сервиса мониторинга?</div>
+    <div class="msg bot bad"><small>Агент команды А</small>10.0.4.13 — и точно не 10.0.7.21.</div>
+    <div class="msg bot"><small>Агент команды Б</small>10.0.7.21, второй адрес — у дашбордов.</div>
+    <div class="msg bot"><small>Агент команды В</small>Не знаю домена, но вот IP: 10.0.7.21.</div>
+  </div>
+  <p>На деле сервис отдаёт оба адреса. Это не единичный случай: в контрольном опросе из шести вопросов о командах, людях и системах агенты разошлись в четырёх. Только 59% ответов опирались на проверяемый источник. Остальное — «я так помню».</p>
+  <p>Причина простая. Каждый агент записывал факты себе: в постоянную память, в справочники своих навыков. Соседний агент их не видел, а записанное однажды никто не перепроверял. Единственным, кто сводил картину воедино, был я, и исправлял я последствия: в отчёте, в чате, на созвоне, у каждого агента отдельно.</p>
+
+  <h2>Что изменилось</h2>
+  <p>Теперь у агентов одна память организации. Она разложена по зонам: ядро организации и зона каждой команды. Перед ответом агент читает свой срез. Писать в память агент не может, это делает один сервис. Новое знание проходит путь из четырёх шагов:</p>
+  <ol class="path">
+    <li><div><b>Агент сдаёт.</b>Вечером, на сверке, — до трёх фактов в день, каждый со ссылкой на источник: задачу, письмо, документ. Договорённости из созвонов приходят туда же.</div></li>
+    <li><div><b>Сервис проверяет.</b>Отсекает секреты и дубли, держит дневной лимит и кладёт запись в очередь «Знание».</div></li>
+    <li><div><b>Я принимаю.</b>Во вкладке «Знание» принимаю запись, выбираю верную версию, если агенты спорят, или отклоняю с причиной.</div></li>
+    <li><div><b>Видят все.</b>Принятый факт становится узлом памяти с источником и ступенью уверенности. Его видят все три агента.</div></li>
+  </ol>
+  <p class="quote">Один раз принять факт — вместо того чтобы трижды поправлять агентов.</p>
+
+  <h2>Правила, которые держат память честной</h2>
+  <ul>
+    <li><b>Черновик — не факт.</b> Пока я не принял запись, она не участвует в ответах агентов.</li>
+    <li><b>Уверенность выводится, а не назначается.</b> Пересказ агента — не выше второй ступени из девяти, устное и чат — не выше третьей. Выше — только с артефактом, который открывается по ссылке. Свою ступень агент себе не присваивает.</li>
+    <li><b>Спор решается артефактом.</b> Если агенты описывают одно и то же по-разному, запись приходит со всеми версиями и ссылками. Я выбираю ту, что подтверждена, а не ту, что звучит увереннее.</li>
+    <li><b>Записи от моего имени — только мои.</b> Цели, ключевые результаты и приёмку знания может сделать только группа владельцев во входе. Агент не может принять факт сам за себя.</li>
+  </ul>
+
+  <h2>Как отвечает агент теперь</h2>
+  <p>Ответ о фактах организации заканчивается тремя строками: на чём держится, что неизвестно и что изменит ответ. «Память не знает» — допустимый ответ.</p>
+  <div class="chat">
+    <div class="msg me"><small>Руководитель</small>Какой адрес у сервиса мониторинга?</div>
+    <div class="msg bot good"><small>Агент команды А</small>В общей памяти узла нет — версии в заметках агентов расходятся. Держится на моём справочнике от 1 октября, это пересказ. Изменит ответ: приёмка записи в «Знание» с проверкой адресов.</div>
+  </div>
+  <p>Память обслуживает себя без меня. Ночью — синхронизация, пересчёт свежести, срезы под агентов и проверка целостности. Раз в час — проверка здоровья с алертом только при переходе в «плохо» и обратно. Утром в статусе каждого агента есть раздел «Кортекс»: что устарело, что ждёт приёмки, где слабые стыки с соседними командами.</p>
+
+  <h2>Что стало лучше уже сейчас</h2>
+  <p>Я повторил тот же опрос на следующее утро после запуска: те же шесть вопросов, те же агенты, без подсказок про память.</p>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Что смотрим</th><th>До</th><th>После</th></tr></thead>
+      <tbody>
+        <tr><td>Обращаются к общей памяти</td><td>0 из 3 агентов</td><td class="up">3 из 3</td></tr>
+        <tr><td>Честное «не знаю»</td><td>1 ответ на весь опрос</td><td class="up">3–4 у каждого агента</td></tr>
+        <tr><td>Три строки опоры в ответе</td><td>ни у кого</td><td class="up">у всех</td></tr>
+        <tr><td>Ответы с проверяемым источником</td><td>59%</td><td>61–67%, в пределах шума</td></tr>
+        <tr><td>Вопросы, где агенты расходятся</td><td>4 из 4 спорных</td><td>3 из 4</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="cap">Один прогон до и один после; агенты от прогона к прогону выбирают разные источники</p>
+  <p>Поведение изменилось в первый же день: агенты перестали выдавать догадку за факт. Знают они пока то же самое, потому что все нужные факты лежат в очереди. В первый день там 84 записи: перенос из старой памяти агентов, где 17 противоречий вынесены на решение, и первые факты с вечерней сверки. Расхождения уйдут, когда я разберу очередь.</p>
+  <p>Проверка нашла и сбой. Агент перед сдачей сверял факты в трекере около четырёх минут, а сверка ждала три — ответ терялся вместе с заметками по целям. Тайм-аут подняли до десяти минут, и тот же прогон записал три факта со ссылками на задачи.</p>
+
+  <h2>Как я пойму, что это окупилось</h2>
+  <p>Метрики считает скрипт по истории и пишет их в память раз в неделю. Они про мою работу, а не про агентов:</p>
+  <ul>
+    <li>сколько полей бизнес-отчёта мне пришлось переписать за агентами;</li>
+    <li>как часто агенты затирают поля друг друга и пишут в чужую команду — за неделю до запуска таких записей было 18;</li>
+    <li>сколько задач агенты начали сами (было 9%) и сколько обещаний закрыли без моего вмешательства;</li>
+    <li>насколько точен расчёт рисков: в недельном снимке теперь рядом лежат расчёт модели и моя оценка.</li>
+  </ul>
+  <p>Первое честное сравнение «после» будет через две недели, точность рисков — по итогам квартала. Чего посчитать нельзя, метрики пишут как «не знаем», а не нулём.</p>
+
+  <a class="deck" href="/cortex-po-agents/">
+    <span>Презентация «Общая память ИИ-агентов»<small>slides.aleksishmanov.ru/cortex-po-agents</small></span><i>↗</i>
+  </a>
+  <p class="cap" style="margin-top:16px">Методология памяти — открытый шаблон <a href="https://github.com/po-helper-org/poh-cortex" target="_blank" rel="noopener">poh-cortex</a>; предыдущая колода — <a href="/cortex-second-brain/">«Второй мозг руководителя»</a>.</p>
+</main>
+</body>
+</html>
