@@ -1,0 +1,775 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<title>Рефлексия агентов · демо-данные</title>
+<style>
+/* poh-ds — единая дизайн-система экранов PO-хелпера (визуал Инбокса).
+   Один файл: токены + компоненты. Подключать целиком; свои стили экрана — только через var(--ds-*).
+   Документация и правила — DESIGN.md рядом с этим файлом. Версия: 1.0.0 */
+
+/* ───────── токены: светлая тема ───────── */
+:root{
+  color-scheme:light dark;
+  /* цвет */
+  --ds-bg:#F7F7F7;          /* фон экрана */
+  --ds-surface:#FFFFFF;     /* карточки, листы */
+  --ds-surface-2:#F2F2F5;   /* поля ввода, сегменты, нажатие */
+  --ds-line:#EBEBEF;        /* разделители */
+  --ds-text:#1C1C1E;
+  --ds-text-2:#6E6E73;      /* вторичный текст, мета */
+  --ds-text-3:#AEAEB2;      /* только неактивное и плейсхолдер */
+  --ds-accent:#B84B65;      /* роза Инбокса: главное действие, выбранное, «сегодня» */
+  --ds-on-accent:#FFFFFF;
+  --ds-accent-soft:#FBEFF2; /* фон выбранного чипа / мягкой плашки */
+  --ds-accent-soft-text:#9C3A51;
+  --ds-danger:#C9302C;      /* только просрочка и ошибка */
+  --ds-warning:#9A5B00;     /* только «скоро срок» */
+  --ds-success:#1E7F3C;     /* только «сделано» */
+
+  /* типографика: 5 ступеней, 3 насыщенности */
+  --ds-font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Inter,system-ui,sans-serif;
+  --ds-fs-display:28px;  /* заголовок экрана — один на экран */
+  --ds-fs-title:17px;    /* заголовок карточки/строки */
+  --ds-fs-body:15px;     /* основной текст */
+  --ds-fs-input:16px;    /* поля ввода: iOS не зумит */
+  --ds-fs-caption:13px;  /* мета, подписи */
+  --ds-fs-label:11px;    /* надпись секции, заглавными */
+  --ds-fw-regular:400; --ds-fw-medium:600; --ds-fw-bold:750;
+  --ds-lh:1.35;
+
+  /* отступы: шаг 4 */
+  --ds-sp-1:4px; --ds-sp-2:8px; --ds-sp-3:12px; --ds-sp-4:16px; --ds-sp-5:24px; --ds-sp-6:32px;
+
+  /* формы */
+  --ds-r-sm:8px;    /* чипы, бейджи-прямоугольники */
+  --ds-r-md:14px;   /* кнопки, поля, сегменты */
+  --ds-r-lg:20px;   /* карточки, листы */
+  --ds-r-pill:999px;
+
+  /* глубина: два уровня */
+  --ds-shadow-1:0 1px 3px rgba(0,0,0,.05);     /* карточка */
+  --ds-shadow-2:0 8px 24px rgba(0,0,0,.12);    /* лист, FAB, всплывающее */
+
+  /* затемнение под листом/диалогом */
+  --ds-scrim:rgba(0,0,0,.3);                   /* лист, диалог, боковая панель */
+  --ds-scrim-strong:rgba(0,0,0,.6);            /* подписи прямо на затемнении (меню FAB) */
+
+  /* движение */
+  --ds-ease:cubic-bezier(.22,1,.36,1);
+  --ds-dur:180ms;
+
+  /* раскладка */
+  --ds-col:720px;        /* ширина колонки контента на десктопе */
+  --ds-tap:44px;         /* минимальная цель касания */
+}
+
+/* ───────── токены: тёмная тема (системная и принудительная) ───────── */
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ds-bg:#000000; --ds-surface:#1C1C1E; --ds-surface-2:#2C2C2E; --ds-line:#38383A;
+    --ds-text:#F2F2F7; --ds-text-2:#A1A1A6; --ds-text-3:#7C7C80;
+    --ds-accent:#E58FA3; --ds-on-accent:#1C1C1E; --ds-accent-soft:#3A1F26; --ds-accent-soft-text:#F0A3B4;
+    --ds-danger:#FF6B63; --ds-warning:#E5A33B; --ds-success:#4CC777;
+    --ds-shadow-1:none; --ds-shadow-2:0 8px 24px rgba(0,0,0,.6);
+    --ds-scrim:rgba(0,0,0,.5); --ds-scrim-strong:rgba(0,0,0,.72);
+  }
+}
+:root[data-theme="dark"]{
+  --ds-bg:#000000; --ds-surface:#1C1C1E; --ds-surface-2:#2C2C2E; --ds-line:#38383A;
+  --ds-text:#F2F2F7; --ds-text-2:#A1A1A6; --ds-text-3:#7C7C80;
+  --ds-accent:#E58FA3; --ds-on-accent:#1C1C1E; --ds-accent-soft:#3A1F26; --ds-accent-soft-text:#F0A3B4;
+  --ds-danger:#FF6B63; --ds-warning:#E5A33B; --ds-success:#4CC777;
+  --ds-shadow-1:none; --ds-shadow-2:0 8px 24px rgba(0,0,0,.6);
+  --ds-scrim:rgba(0,0,0,.5); --ds-scrim-strong:rgba(0,0,0,.72);
+}
+
+/* ───────── основа ───────── */
+@layer ds-reset{ *,*::before,*::after{box-sizing:border-box;margin:0;padding:0} }
+html,body{min-height:100%}
+body{font-family:var(--ds-font);font-size:var(--ds-fs-body);line-height:var(--ds-lh);
+  background:var(--ds-bg);color:var(--ds-text);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--ds-accent);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){ *{transition:none!important;animation:none!important} }
+
+/* ───────── раскладка ───────── */
+.ds-app{display:flex;min-height:100dvh}
+.ds-screen{flex:1;min-width:0;max-width:var(--ds-col);margin:0 auto;
+  padding:max(var(--ds-sp-3),env(safe-area-inset-top)) var(--ds-sp-4) calc(96px + env(safe-area-inset-bottom))}
+@media (min-width:900px){ .ds-screen{padding:var(--ds-sp-6) var(--ds-sp-5)} }
+.ds-screen--wide{max-width:1080px}   /* две колонки на десктопе */
+
+/* шапка экрана: один заголовок + одна строка подписи + максимум одно действие справа */
+.ds-header{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--ds-sp-3);padding:var(--ds-sp-2) var(--ds-sp-1) var(--ds-sp-4)}
+.ds-header__title{font-size:var(--ds-fs-display);font-weight:var(--ds-fw-bold);letter-spacing:-.4px;line-height:1.15}
+.ds-header__sub{font-size:var(--ds-fs-caption);color:var(--ds-text-2);margin-top:2px}
+
+/* секция: надпись + содержимое */
+.ds-section{margin-bottom:var(--ds-sp-5)}
+.ds-section__label{font-size:var(--ds-fs-label);font-weight:var(--ds-fw-bold);letter-spacing:.4px;text-transform:uppercase;
+  color:var(--ds-text-2);padding:0 var(--ds-sp-1) var(--ds-sp-2);display:flex;justify-content:space-between}
+
+/* ───────── поверхности ───────── */
+.ds-card{background:var(--ds-surface);border-radius:var(--ds-r-lg);box-shadow:var(--ds-shadow-1);padding:var(--ds-sp-4)}
+.ds-card--flush{padding:0 var(--ds-sp-4)}   /* для списка строк внутри */
+
+/* строка списка: [ведущий элемент] заголовок/мета [хвост] */
+.ds-row{display:flex;align-items:center;gap:var(--ds-sp-3);min-height:var(--ds-tap);padding:var(--ds-sp-3) 0}
+.ds-row + .ds-row{border-top:1px solid var(--ds-line)}
+.ds-row__main{flex:1;min-width:0}
+.ds-row__title{font-size:var(--ds-fs-body);font-weight:var(--ds-fw-medium);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ds-row__meta{font-size:var(--ds-fs-caption);color:var(--ds-text-2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ds-row__end{flex:none;font-size:var(--ds-fs-caption);color:var(--ds-text-2);font-variant-numeric:tabular-nums}
+.ds-row--done .ds-row__title{color:var(--ds-text-2);text-decoration:line-through}
+a.ds-row:active,button.ds-row:active{opacity:.6}
+
+/* отметка-кружок (чекбокс задачи) */
+.ds-check{flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--ds-text-3);background:none;cursor:pointer;
+  display:grid;place-items:center;transition:background var(--ds-dur) var(--ds-ease)}
+.ds-check[aria-checked="true"]{background:var(--ds-accent);border-color:var(--ds-accent)}
+.ds-check[aria-checked="true"]::after{content:"";width:9px;height:5px;border:2px solid var(--ds-on-accent);border-top:0;border-right:0;transform:translateY(-1px) rotate(-45deg)}
+
+/* аватар-инициалы */
+.ds-avatar{flex:none;width:32px;height:32px;border-radius:50%;background:var(--ds-surface-2);color:var(--ds-text-2);
+  display:grid;place-items:center;font-size:var(--ds-fs-caption);font-weight:var(--ds-fw-medium)}
+
+/* ───────── действия ───────── */
+.ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--ds-sp-2);min-height:var(--ds-tap);
+  padding:0 var(--ds-sp-4);border-radius:var(--ds-r-md);border:0;cursor:pointer;
+  font-size:var(--ds-fs-body);font-weight:var(--ds-fw-medium);background:var(--ds-surface-2);color:var(--ds-text);
+  transition:opacity var(--ds-dur) var(--ds-ease)}
+.ds-btn:active{opacity:.7}
+.ds-btn--primary{background:var(--ds-accent);color:var(--ds-on-accent)}   /* одна на экран */
+.ds-btn--ghost{background:none;color:var(--ds-accent);padding:0 var(--ds-sp-2)}
+.ds-btn--danger{background:none;color:var(--ds-danger)}
+.ds-btn--block{width:100%}
+.ds-btn[disabled]{opacity:.4;cursor:default}
+
+/* плавающая главная кнопка (считается главным действием экрана) */
+.ds-fab{position:fixed;right:max(var(--ds-sp-4),env(safe-area-inset-right));bottom:calc(80px + env(safe-area-inset-bottom));
+  width:56px;height:56px;border-radius:50%;border:0;cursor:pointer;background:var(--ds-accent);color:var(--ds-on-accent);
+  box-shadow:var(--ds-shadow-2);display:grid;place-items:center;font-size:var(--ds-fs-display);font-weight:var(--ds-fw-regular)}
+@media (min-width:900px){ .ds-fab{bottom:var(--ds-sp-5);right:var(--ds-sp-5)} }
+
+/* ───────── выбор ───────── */
+/* чипы-фильтры: одна строка, листается вбок, не больше 5–6 видимых */
+.ds-chips{display:flex;gap:var(--ds-sp-2);overflow-x:auto;scrollbar-width:none;margin:0 calc(-1 * var(--ds-sp-4)) var(--ds-sp-4);padding:0 var(--ds-sp-4)}
+.ds-chips::-webkit-scrollbar{display:none}
+.ds-chip{flex:none;min-height:32px;padding:0 var(--ds-sp-3);border-radius:var(--ds-r-pill);border:0;cursor:pointer;
+  background:var(--ds-surface);color:var(--ds-text);font-size:var(--ds-fs-caption);font-weight:var(--ds-fw-medium);box-shadow:var(--ds-shadow-1)}
+.ds-chip[aria-pressed="true"]{background:var(--ds-accent-soft);color:var(--ds-accent-soft-text);box-shadow:none}
+
+/* сегменты: 2–4 взаимоисключающих вида */
+.ds-segmented{display:flex;padding:3px;border-radius:var(--ds-r-md);background:var(--ds-surface-2);margin-bottom:var(--ds-sp-4)}
+.ds-segmented button{flex:1;min-height:32px;border:0;background:none;border-radius:calc(var(--ds-r-md) - 3px);cursor:pointer;
+  font-size:var(--ds-fs-caption);font-weight:var(--ds-fw-medium);color:var(--ds-text-2)}
+.ds-segmented button[aria-selected="true"]{background:var(--ds-surface);color:var(--ds-text);box-shadow:var(--ds-shadow-1)}
+
+/* ───────── статус ───────── */
+.ds-badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:var(--ds-r-pill);
+  background:var(--ds-danger);color:var(--ds-surface);font-size:var(--ds-fs-label);font-weight:var(--ds-fw-bold);font-variant-numeric:tabular-nums}
+.ds-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ds-text-3);flex:none}
+.ds-dot--danger{background:var(--ds-danger)} .ds-dot--warning{background:var(--ds-warning)} .ds-dot--success{background:var(--ds-success)}
+.ds-text-danger{color:var(--ds-danger)} .ds-text-warning{color:var(--ds-warning)} .ds-text-success{color:var(--ds-success)}
+.ds-muted{color:var(--ds-text-2)}
+
+/* ───────── ввод ───────── */
+.ds-input{width:100%;min-height:var(--ds-tap);padding:0 var(--ds-sp-3);border-radius:var(--ds-r-md);border:0;
+  background:var(--ds-surface-2);font-size:var(--ds-fs-input)}
+.ds-input::placeholder{color:var(--ds-text-3)}
+.ds-field{display:block;margin-bottom:var(--ds-sp-4)}
+.ds-field__label{display:block;font-size:var(--ds-fs-caption);color:var(--ds-text-2);margin:0 0 var(--ds-sp-1) var(--ds-sp-1)}
+
+/* ───────── пусто ───────── */
+.ds-empty{text-align:center;padding:var(--ds-sp-6) var(--ds-sp-4);color:var(--ds-text-2)}
+.ds-empty__title{font-size:var(--ds-fs-title);font-weight:var(--ds-fw-medium);color:var(--ds-text);margin-bottom:var(--ds-sp-1)}
+.ds-empty .ds-btn{margin-top:var(--ds-sp-4)}
+
+/* ───────── лист снизу (детали, форма) ───────── */
+.ds-sheet{position:fixed;inset:auto 0 0 0;max-height:88dvh;overflow:auto;background:var(--ds-surface);
+  border-radius:var(--ds-r-lg) var(--ds-r-lg) 0 0;box-shadow:var(--ds-shadow-2);
+  padding:var(--ds-sp-3) var(--ds-sp-4) calc(var(--ds-sp-4) + env(safe-area-inset-bottom));
+  transform:translateY(105%);transition:transform var(--ds-dur) var(--ds-ease);z-index:20}
+.ds-sheet[open],.ds-sheet.is-open{transform:none}
+.ds-sheet__grip{width:36px;height:5px;border-radius:var(--ds-r-pill);background:var(--ds-line);margin:0 auto var(--ds-sp-3)}
+.ds-scrim{position:fixed;inset:0;background:var(--ds-scrim);opacity:0;pointer-events:none;transition:opacity var(--ds-dur) var(--ds-ease);z-index:19}
+.ds-scrim.is-open{opacity:1;pointer-events:auto}
+@media (min-width:900px){
+  .ds-sheet{inset:auto auto 50% 50%;width:480px;border-radius:var(--ds-r-lg);transform:translate(-50%,60%);opacity:0;pointer-events:none}
+  .ds-sheet.is-open{transform:translate(-50%,50%);opacity:1;pointer-events:auto}
+}
+
+/* ───────── навигация: таббар (телефон) / рейка (десктоп) ───────── */
+.ds-tabbar{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--ds-surface);border-top:1px solid var(--ds-line);
+  padding:var(--ds-sp-1) 0 env(safe-area-inset-bottom);z-index:10}
+.ds-tabbar a{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:50px;justify-content:center;
+  font-size:var(--ds-fs-label);font-weight:var(--ds-fw-medium);color:var(--ds-text-2);position:relative}
+.ds-tabbar a[aria-current="page"]{color:var(--ds-accent)}
+.ds-tabbar svg{width:24px;height:24px}
+.ds-tabbar .ds-badge{position:absolute;top:2px;left:calc(50% + 6px)}
+@media (min-width:900px){
+  .ds-tabbar{position:sticky;top:0;bottom:auto;flex-direction:column;justify-content:flex-start;width:84px;height:100dvh;
+    border-top:0;border-right:1px solid var(--ds-line);padding:var(--ds-sp-4) var(--ds-sp-2);gap:var(--ds-sp-2)}
+  .ds-tabbar a{flex:none;min-height:60px;border-radius:var(--ds-r-md)}
+  .ds-tabbar a[aria-current="page"]{background:var(--ds-accent-soft);color:var(--ds-accent-soft-text)}
+}
+
+/* ───────── утилиты (только эти) ───────── */
+.ds-stack{display:flex;flex-direction:column;gap:var(--ds-sp-3)}
+.ds-hstack{display:flex;align-items:center;gap:var(--ds-sp-2)}
+.ds-grid{display:grid;gap:var(--ds-sp-4);grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+.ds-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+</style>
+<style>
+/* Экран «🪞 Рефлексия агентов» — только через токены poh-ds (var(--ds-*)). */
+
+/* шапка: «‹ Инбокс» над заголовком */
+.ar-top{margin:0 0 calc(-1 * var(--ds-sp-2)) calc(-1 * var(--ds-sp-2))}
+.ar-top__back{font-size:var(--ds-fs-body)}
+
+/* лента: сообщение агента = аватар + имя + пузырь + ветка замечаний */
+.ar-feed{display:flex;flex-direction:column;gap:var(--ds-sp-5)}
+.ar-feed[hidden]{display:none}
+.ar-msg{display:grid;grid-template-columns:40px minmax(0,1fr);gap:var(--ds-sp-2) 10px;align-items:start;scroll-margin-top:var(--ds-sp-4)}
+.ar-ava{width:40px;height:40px;font-size:var(--ds-fs-label);font-weight:var(--ds-fw-bold);letter-spacing:.2px}
+.ar-msg__body{min-width:0;display:flex;flex-direction:column;gap:var(--ds-sp-2)}
+.ar-who{display:flex;flex-wrap:wrap;align-items:center;gap:2px var(--ds-sp-2);min-height:28px;font-size:var(--ds-fs-caption);color:var(--ds-text-2);padding:0 0 0 var(--ds-sp-1)}
+.ar-who__name{min-width:0;max-width:100%;font-weight:var(--ds-fw-medium);color:var(--ds-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ar-who__time{white-space:nowrap}
+.ar-who .ar-chip{margin-left:auto}
+
+.ar-bubble{background:var(--ds-surface);box-shadow:var(--ds-shadow-1);border-radius:var(--ds-sp-1) var(--ds-r-lg) var(--ds-r-lg) var(--ds-r-lg);
+  padding:var(--ds-sp-3) var(--ds-sp-4) var(--ds-sp-4);overflow-wrap:anywhere}
+.ar-head{font-size:var(--ds-fs-title);font-weight:var(--ds-fw-medium);line-height:1.3}
+.ar-label{font-size:var(--ds-fs-caption);font-weight:var(--ds-fw-medium);color:var(--ds-text-2);margin-top:var(--ds-sp-3)}
+.ar-list{margin-top:var(--ds-sp-1);padding-left:1.15em;display:flex;flex-direction:column;gap:var(--ds-sp-1)}
+.ar-list li::marker{color:var(--ds-text-3)}
+.ar-why{display:block;font-size:var(--ds-fs-caption);color:var(--ds-text-2)}
+.ar-foot{display:flex;justify-content:flex-end;margin-top:var(--ds-sp-4)}
+.ar-foot .ds-btn{width:100%}
+@media (min-width:600px){ .ar-foot .ds-btn{width:auto} }
+
+/* статус документа */
+.ar-chip{flex:none;display:inline-flex;align-items:center;min-height:24px;padding:0 10px;border-radius:var(--ds-r-pill);
+  font-size:var(--ds-fs-caption);font-weight:var(--ds-fw-medium);white-space:nowrap}
+.ar-chip--wait{background:var(--ds-accent-soft);color:var(--ds-accent-soft-text)}
+.ar-chip--done{background:var(--ds-surface-2);color:var(--ds-success)}
+
+/* ветка: замечание PO — справа, ответ агента — слева */
+.ar-thread{display:flex;flex-direction:column;gap:var(--ds-sp-2)}
+.ar-thread[hidden]{display:none}
+.ar-mine,.ar-reply{max-width:88%;overflow-wrap:anywhere}
+.ar-mine{align-self:flex-end;text-align:left}
+.ar-mine__bubble{background:var(--ds-accent-soft);color:var(--ds-text);padding:var(--ds-sp-2) var(--ds-sp-3);
+  border-radius:var(--ds-r-lg) var(--ds-r-lg) var(--ds-sp-1) var(--ds-r-lg)}
+.ar-reply{align-self:flex-start;background:var(--ds-surface);box-shadow:var(--ds-shadow-1);padding:var(--ds-sp-2) var(--ds-sp-3);
+  border-radius:var(--ds-sp-1) var(--ds-r-lg) var(--ds-r-lg) var(--ds-r-lg)}
+.ar-reply__who{font-size:var(--ds-fs-caption);font-weight:var(--ds-fw-medium);color:var(--ds-text-2)}
+.ar-text{white-space:pre-wrap}
+.ar-quote{font-size:var(--ds-fs-caption);color:var(--ds-text-2);margin-bottom:2px}
+.ar-lesson{font-size:var(--ds-fs-caption);color:var(--ds-text-2);margin-top:var(--ds-sp-1)}
+.ar-meta{font-size:var(--ds-fs-caption);color:var(--ds-text-2);margin-top:2px;text-align:right;padding:0 var(--ds-sp-1)}
+.ar-reply .ar-meta{text-align:left;padding:0}
+
+/* документ во весь экран */
+.ar-lock,.ar-lock body{overflow:hidden}
+.ar-doc{position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;background:var(--ds-bg)}
+.ar-doc[hidden]{display:none}
+.ar-doc__bar{flex:none;display:flex;align-items:center;gap:var(--ds-sp-2);background:var(--ds-surface);border-bottom:1px solid var(--ds-line);
+  padding:max(var(--ds-sp-1),env(safe-area-inset-top)) var(--ds-sp-2) var(--ds-sp-1)}
+.ar-doc__name{flex:1;min-width:0;text-align:center;font-weight:var(--ds-fw-medium);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ar-doc__review{flex:none;padding:0 var(--ds-sp-3)}
+.ar-doc__review[aria-pressed="true"]{background:var(--ds-surface-2);color:var(--ds-success)}
+.ar-doc__frame{flex:1;width:100%;min-height:0;border:0;background:var(--ds-surface)}
+
+.ar-compose{flex:none;background:var(--ds-surface);border-top:1px solid var(--ds-line);
+  padding:var(--ds-sp-2) var(--ds-sp-3) calc(var(--ds-sp-2) + env(safe-area-inset-bottom))}
+.ar-compose__row{display:flex;align-items:flex-end;gap:var(--ds-sp-2)}
+.ar-compose__input{flex:1;min-width:0;resize:none;display:block;padding:10px var(--ds-sp-3);line-height:var(--ds-lh);max-height:160px;overflow-y:auto}
+.ar-compose__send{flex:none}
+.ar-compose__note{font-size:var(--ds-fs-caption);color:var(--ds-success);padding:0 var(--ds-sp-1) var(--ds-sp-2)}
+.ar-compose__note.is-error{color:var(--ds-danger)}
+
+@media (min-width:900px){
+  .ar-doc{width:900px;margin:0 auto;box-shadow:var(--ds-shadow-2)}
+}
+
+/* всплывающее сообщение */
+.ar-toast{position:fixed;left:50%;bottom:calc(var(--ds-sp-5) + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:40;
+  max-width:calc(100% - 2 * var(--ds-sp-4));padding:var(--ds-sp-2) var(--ds-sp-4);border-radius:var(--ds-r-md);
+  background:var(--ds-text);color:var(--ds-bg);font-size:var(--ds-fs-caption);box-shadow:var(--ds-shadow-2)}
+.ar-toast[hidden]{display:none}
+
+/* вход через гейт — как на экране созвонов */
+.login{margin-top:var(--ds-sp-4)}
+.login iframe{width:100%;height:420px;border:0;border-radius:var(--ds-r-lg);background:var(--ds-surface)}
+
+/* поручение PO из рефлексии: состояние исполнения под замечанием */
+.ar-order { margin: 6px 0 2px 24px; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--poh-line, #d9dde3);
+  background: var(--poh-surface-2, rgba(127, 127, 127, .08)); font-size: 13px; }
+.ar-order__head { font-weight: 600; }
+.ar-order--done { border-color: #2e7d32; }
+.ar-order--bad { border-color: #c62828; }
+.ar-order__link { display: inline-block; margin-top: 4px; }
+
+</style>
+</head>
+<body>
+<div class="ds-app"><main class="ds-screen">
+  <nav class="ar-top"><a class="ds-btn ds-btn--ghost ar-top__back" href="#" onclick="return false">‹ Инбокс</a></nav>
+  <header class="ds-header">
+    <div>
+      <h1 class="ds-header__title">🪞 Рефлексия агентов</h1>
+      <div class="ds-header__sub" id="sub">&nbsp;</div>
+    </div>
+  </header>
+
+  <section class="ar-feed" id="feed" aria-label="Документы агентов" hidden></section>
+  <div class="ds-empty" id="empty" hidden>
+    <div class="ds-empty__title">Рефлексий пока нет</div>
+    Агенты пишут их по будням утром.
+  </div>
+
+  <div id="login" class="login" hidden>
+    <p class="ds-muted">Нужен вход через гейт — документы и список закрыты.</p>
+    <iframe id="login-frame" title="Вход"></iframe>
+  </div>
+</main></div>
+
+<div class="ds-scrim" id="scrim"></div>
+<section class="ar-doc" id="doc" role="dialog" aria-modal="true" aria-labelledby="doc-name" hidden>
+  <header class="ar-doc__bar">
+    <button class="ds-btn ds-btn--ghost" id="doc-back" type="button">‹ Назад</button>
+    <div class="ar-doc__name" id="doc-name"></div>
+    <button class="ds-btn ds-btn--primary ar-doc__review" id="doc-review" type="button" aria-pressed="false">✓ Проверено</button>
+  </header>
+  <iframe class="ar-doc__frame" id="doc-frame" title="Документ рефлексии"
+          sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer"></iframe>
+  <form class="ar-compose" id="compose" autocomplete="off">
+    <div class="ar-compose__note" id="compose-note" role="status" hidden></div>
+    <div class="ar-compose__row">
+      <textarea class="ds-input ar-compose__input" id="remark" rows="1" maxlength="4000"
+                placeholder="Замечание агенту…" aria-label="Замечание агенту" enterkeyhint="send"></textarea>
+      <button class="ds-btn ds-btn--ghost ar-compose__send" id="send" type="submit" disabled>Отправить</button>
+    </div>
+  </form>
+</section>
+
+<div class="ar-toast" id="toast" role="status" aria-live="polite" hidden></div>
+<script>
+(function () {
+  var DATA = {"date": "2026-11-19", "room": "", "agents": [{"id": "po-pay-2026-11-19", "profile": "po-pay", "team": "pay", "name": "PAY", "date": "2026-11-19", "stage": "published", "headline": "Пилот оплаты частями сдвинулся на 8.12 — до заморозки релизов 12.12 остаётся 4 рабочих дня. Цель 1 перевожу в «есть риск».", "po_today": ["Решить, показываем ли строку «переплата 0 ₽» — от этого зависит KR 1.2", "Согласовать с Орловым позицию 2,7% к комитету 24.11", "Попросить у партнёра промежуточную сборку вебхука к 25.11"], "questions": [{"q": "Пилот успешен при 5% охвата или нужен отдельный KR по возвратам?", "why": "В карте целей нет KR про отмены, а это главный риск пилота"}], "published_at": "2026-11-19T08:52:00+03:00", "remarks": [{"id": "r1", "at": "2026-11-19T09:41:00+03:00", "state": "answered", "quote": "KR 1.2 Конверсия шага оплаты не ниже 92%", "text": "Конверсию шага я считаю по сплит-тесту, а не по готовности экрана. Пока нет данных — ставь «в графике».", "reply": "Принял: KR 1.2 — «в графике» до первых данных пилота. Конверсию беру только из сплит-теста.", "reply_at": "2026-11-19T10:06:00+03:00", "lesson": "Конверсию не оцениваю по готовности экрана — только по данным сплит-теста."}, {"id": "r2", "at": "2026-11-19T09:44:00+03:00", "state": "answered", "text": "Заведи задачу Сорокину: запасной план отмены без вебхука, срок 26.11.", "reply": "Завёл PAY-431 на Сорокина, срок 26.11, связал с PAY-400. Доложил вам в личный чат.", "reply_at": "2026-11-19T09:52:00+03:00"}], "doc_url": "doc-pay.html"}, {"id": "po-cab-2026-11-19", "profile": "po-cab", "team": "cab", "name": "CAB", "date": "2026-11-19", "stage": "published", "headline": "Личный кабинет в графике: новый профиль раскатан на 50%, ошибок входа не больше, чем до раскатки.", "po_today": ["Подтвердить шаг раскатки 75% на 26.11", "Посмотреть отчёт по ошибкам входа — 5 минут"], "questions": [{"q": "Удаление аккаунта берём в этот квартал или переносим на январь?", "why": "CAB-214 не привязан к цели квартала"}], "published_at": "2026-11-19T08:50:00+03:00", "remarks": [], "doc_url": "doc-cab.html"}, {"id": "po-prt-2026-11-19", "profile": "po-prt", "team": "prt", "name": "PRT", "date": "2026-11-19", "stage": "reviewed", "headline": "Партнёрский API v2: два партнёра из трёх уже на новой версии, третий ждёт ответа своих юристов до 21.11.", "po_today": ["21.11 — проверить, ответили ли юристы «Север-Логистики»"], "questions": [], "published_at": "2026-11-19T08:54:00+03:00", "remarks": [{"id": "r3", "at": "2026-11-18T09:20:00+03:00", "state": "answered", "text": "Партнёр не молчит 9 дней: я говорил с ним в понедельник, ждём его юристов до 21.11.", "reply": "Исправил: «Север-Логистика» ждёт юристов до 21.11, эскалацию снял.", "reply_at": "2026-11-18T10:05:00+03:00", "lesson": "Звонок PO с партнёром — факт, даже если в Jira тишина."}], "doc_url": "doc-prt.html"}], "orders": [{"id": "o1", "remark_id": "r2", "team": "pay", "kind": "jira", "state": "done", "text": "Заведи задачу Сорокину: запасной план отмены без вебхука, срок 26.11.", "result": {"what": "PAY-431 «Запасной план отмены без вебхука» — Сорокин, срок 26.11", "ref": "PAY-431"}}]};
+  var ORDER = /^(заведи|добавь|запиши|поставь|создай)/i;
+  function reply(x, st) { return Promise.resolve(new Response(JSON.stringify(x), {status: st || 200, headers: {'content-type': 'application/json'}})); }
+  function find(id) { return DATA.agents.filter(function (a) { return a.id === id; })[0]; }
+  window.fetch = function (url, opts) {
+    var p = String(url).replace(/^.*\/api\//, '');
+    var body = opts && opts.body ? JSON.parse(opts.body) : null;
+    if (/^agents(\?|$)/.test(p)) return reply(JSON.parse(JSON.stringify(DATA)));
+    var m = p.match(/^agents\/([^/]+)\/(review|remark)$/);
+    if (!m) return reply({error: 'нет такого адреса'}, 404);
+    var a = find(decodeURIComponent(m[1]));
+    if (m[2] === 'review') { a.stage = body.on ? 'reviewed' : 'published'; return reply({stage: a.stage}); }
+    var r = {id: 'r' + Date.now(), at: new Date().toISOString(), state: 'new', text: body.text};
+    a.remarks.push(r);
+    var order = null;
+    if (ORDER.test(body.text.trim())) {
+      order = {id: 'o' + Date.now(), remark_id: r.id, team: a.team, kind: 'jira', state: 'running', text: body.text};
+      DATA.orders.push(order);
+    }
+    /* Демо: агент отвечает через несколько секунд (на сервере — в ближайший проход). */
+    setTimeout(function () {
+      r.state = 'answered'; r.reply_at = new Date().toISOString();
+      if (order) {
+        order.state = 'done';
+        order.result = {what: a.name + '-501 «' + body.text.replace(ORDER, '').trim().slice(0, 60) + '» — заведено, срок из замечания', ref: a.name + '-501'};
+        r.reply = 'Сделал: завёл задачу ' + a.name + '-501 и доложил вам в личный чат.';
+      } else {
+        r.reply = 'Принял. Поправил свою картину команды и учту это в завтрашней рефлексии.';
+        r.lesson = 'Слова PO — достоверный источник: «' + body.text.slice(0, 80) + (body.text.length > 80 ? '…' : '') + '»';
+      }
+      if (typeof load === 'function') load();
+    }, 3500);
+    return reply({remark: r, order: order});
+  };
+})();
+</script>
+<script>
+// Экран «🪞 Рефлексия агентов» (/calls/agent-reflection/): чат с документами PO-агентов — главное, что PO сделать
+// сегодня, вопросы агента и ветка замечаний; документ — во весь экран с «✓ Проверено» и полем замечания.
+// API и документы — за гейтом corp-link: 403 или не-JSON → вход во фрейме /calls/login, после входа — перезагрузка.
+const $ = (id) => document.getElementById(id);
+const params = new URLSearchParams(location.search);
+const theme = params.get("theme");
+if (theme === "dark" || theme === "light") document.documentElement.dataset.theme = theme;
+const DATE = /^\d{4}-\d{2}-\d{2}$/.test(params.get("date") || "") ? params.get("date") : "";
+const TZ = "Europe/Moscow";
+const BODY_MAX = 7900;  // nginx client_max_body_size 8k — с запасом на JSON
+
+let data = null;          // ответ ../api/agents
+let openId = "";          // документ во весь экран
+let loginShown = false;
+let loginTries = 0;       // вход прошёл, а API всё равно 403 — не гонять вход по кругу
+let loading = false;
+let sending = false;
+let firstRender = true;
+const drafts = {};        // недописанные замечания по документам
+
+// ---- вход через гейт (как на экране созвонов)
+function showLogin() {
+  if (loginShown) return;
+  loginShown = true;
+  if (openId) back();     // панель документа закрыла бы вход; черновик замечания сохранится
+  $("feed").hidden = true;
+  $("empty").hidden = true;
+  $("login").hidden = false;
+  $("login-frame").src = "/calls/login";
+}
+$("login-frame").addEventListener("load", () => {
+  let path = "";
+  try { path = $("login-frame").contentWindow.location.pathname; } catch (_) { return; }
+  if (path === "/calls/login") {
+    loginShown = false; $("login").hidden = true; $("login-frame").removeAttribute("src");
+    if (++loginTries > 2) { $("sub").textContent = "Вход не прошёл — обновите страницу"; return; }
+    load();
+  }
+});
+
+// данные, null (нужен вход) или {error}
+async function api(path, body) {
+  const opts = {credentials: "same-origin", headers: {Accept: "application/json"}};
+  if (body) Object.assign(opts, {method: "POST", body: JSON.stringify(body),
+                                 headers: {Accept: "application/json", "Content-Type": "application/json"}});
+  let r;
+  try { r = await fetch("../api/" + path, opts); } catch (_) { return {error: "Сервер не отвечает"}; }
+  if (r.status === 413) return {error: "Слишком длинно — сократите"};
+  if (r.status >= 500) return {error: "Сервер не отвечает"};
+  const ct = r.headers.get("content-type") || "";
+  if (r.status === 401 || r.status === 403 || !ct.includes("json")) { showLogin(); return null; }
+  let d = null;
+  try { d = await r.json(); } catch (_) { return {error: "Ответ сервера не разобрать"}; }
+  if (!r.ok) return {error: (d && d.error) || `Ошибка ${r.status}`};
+  return d;
+}
+
+// ---- даты по Москве
+const fmtDay = new Intl.DateTimeFormat("ru-RU", {weekday: "short", day: "numeric", month: "long", timeZone: TZ});
+const fmtShort = new Intl.DateTimeFormat("ru-RU", {day: "numeric", month: "short", timeZone: TZ});
+const fmtTime = new Intl.DateTimeFormat("ru-RU", {hour: "2-digit", minute: "2-digit", timeZone: TZ});
+const fmtIso = new Intl.DateTimeFormat("en-CA", {year: "numeric", month: "2-digit", day: "2-digit", timeZone: TZ});
+
+function day(d) {
+  const t = new Date(d + "T12:00:00+03:00");
+  if (isNaN(t)) return "";
+  const s = fmtDay.format(t);
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+function when(iso) {
+  if (!iso) return "";
+  const t = new Date(iso);
+  if (isNaN(t)) return "";
+  return fmtIso.format(t) === fmtIso.format(new Date()) ? fmtTime.format(t)
+    : `${fmtShort.format(t)}, ${fmtTime.format(t)}`;
+}
+function stamp(iso) {  // в строке агента: сегодня — время, раньше — только дата (иначе на 360 px режется имя)
+  const t = new Date(iso || "");
+  if (isNaN(t)) return "";
+  return fmtIso.format(t) === fmtIso.format(new Date()) ? fmtTime.format(t) : fmtShort.format(t);
+}
+function waiting(n, total) {
+  if (!total) return "";
+  if (!n) return "всё проверено";
+  return `${n} ${n % 10 === 1 && n % 100 !== 11 ? "ждёт" : "ждут"} проверки`;
+}
+
+// ---- разметка (только textContent — тексты агентов не исполняем)
+function el(tag, cls, text) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text) e.textContent = text;
+  return e;
+}
+function str(x, ...keys) {
+  if (x == null) return "";
+  if (typeof x !== "object") return String(x);
+  for (const k of keys) if (x[k]) return String(x[k]);
+  return "";
+}
+function list(items, cls) {
+  const ul = el("ul", "ar-list" + (cls ? " " + cls : ""));
+  for (const it of items) ul.append(it instanceof Node ? it : el("li", "", it));
+  return ul;
+}
+const agentName = (a) => `PO-агент ${a.name || String(a.team || "").toUpperCase()}`;
+const find = (id) => ((data && data.agents) || []).find((a) => a.id === id);
+
+function chip(stage) {
+  return stage === "reviewed" ? el("span", "ar-chip ar-chip--done", "проверено ✓")
+    : el("span", "ar-chip ar-chip--wait", "ждёт проверки");
+}
+
+/* поручения PO из рефлексии (docs/agent-orders.md): состояние — рядом с замечанием-приказом */
+const ORDER_KIND = {jira: "Jira", calendar: "календарь", promise: "«Я обещал»", other: "поручение"};
+const ORDER_STATE = {
+  new: "принято, агент запускается", running: "в работе у агента",
+  overdue: "не выполнено в срок — агент продолжает", stuck: "застряло, нужна помощь",
+  done: "исполнено", failed: "не выполнено",
+};
+const orderOf = (r) => ((data && data.orders) || []).find((o) => o.remark_id === r.id);
+
+function orderLine(r) {
+  const o = orderOf(r);
+  if (!o) return null;
+  const done = o.state === "done";
+  const box = el("div", "ar-order" + (done ? " ar-order--done" : o.state === "failed" || o.state === "stuck" ? " ar-order--bad" : ""));
+  box.append(el("div", "ar-order__head",
+                `📌 Поручение · ${ORDER_KIND[o.kind] || o.kind} — ${ORDER_STATE[o.state] || o.state}`));
+  const what = (o.result && o.result.what) || o.error || o.reason || "";
+  if (what) box.append(el("div", "ar-text", what));
+  const link = o.result && (o.result.link || o.result.ref);
+  if (link) {
+    const a = el("a", "ar-order__link", "где проверять ↗");
+    a.href = link;
+    a.target = "_blank";
+    a.rel = "noreferrer";
+    box.append(/^https?:/.test(link) ? a : el("div", "ar-meta", link));
+  }
+  return box;
+}
+
+function thread(a) {
+  const box = el("div", "ar-thread");
+  box.id = "t-" + a.id;
+  const rs = [...(a.remarks || [])].sort((x, y) => String(x.at || "").localeCompare(String(y.at || "")));
+  for (const r of rs) {
+    const mine = el("div", "ar-mine");
+    const b = el("div", "ar-mine__bubble");
+    if (r.quote) b.append(el("div", "ar-quote", `«${r.quote}»`));
+    b.append(el("div", "ar-text", r.text));
+    mine.append(b, el("div", "ar-meta",
+                      [when(r.at), r.state === "answered" ? "" : "передано агенту"].filter(Boolean).join(" · ")));
+    box.append(mine);
+    const ord = orderLine(r);
+    if (ord) box.append(ord);
+    if (r.reply) {
+      const rep = el("div", "ar-reply");
+      rep.append(el("div", "ar-reply__who", agentName(a)), el("div", "ar-text", r.reply));
+      if (r.lesson) rep.append(el("div", "ar-lesson", "Урок: " + r.lesson));
+      const t = when(r.reply_at);
+      if (t) rep.append(el("div", "ar-meta", t));
+      box.append(rep);
+    }
+  }
+  box.hidden = rs.length === 0;
+  return box;
+}
+
+function message(a) {
+  const art = el("article", "ar-msg");
+  art.id = "m-" + a.id;
+  const ava = el("div", "ds-avatar ar-ava", String(a.name || a.team || "?").toUpperCase().slice(0, 4));
+  ava.setAttribute("aria-hidden", "true");
+
+  const who = el("div", "ar-who");
+  who.append(el("span", "ar-who__name", agentName(a)));
+  const t = stamp(a.published_at);
+  if (t) { const s = el("span", "ar-who__time", t); s.title = when(a.published_at); who.append(s); }
+  who.append(chip(a.stage));
+
+  const bubble = el("div", "ar-bubble");
+  if (a.headline) bubble.append(el("p", "ar-head", a.headline));
+  const today = (a.po_today || []).map((x) => str(x, "what", "text")).filter(Boolean).slice(0, 3);
+  if (today.length) bubble.append(el("div", "ar-label", "Сегодня тебе:"), list(today));
+  const qs = (a.questions || []).map((q) => ({q: str(q, "q", "text"), why: typeof q === "object" && q ? str(q, "why") : ""}))
+    .filter((q) => q.q);
+  if (qs.length) {
+    bubble.append(el("div", "ar-label", qs.length === 1 ? "Вопрос агента:" : "Вопросы агента:"),
+                  list(qs.map((q) => { const li = el("li", "", q.q); if (q.why) li.append(el("span", "ar-why", q.why)); return li; })));
+  }
+  if (a.doc_url) {
+    const foot = el("div", "ar-foot");
+    const open = el("button", "ds-btn", "Открыть документ");
+    open.type = "button";
+    open.dataset.open = a.id;
+    foot.append(open);
+    bubble.append(foot);
+  }
+
+  const body = el("div", "ar-msg__body");
+  body.append(who, bubble, thread(a));
+  art.append(ava, body);
+  return art;
+}
+
+function render() {
+  const agents = (data && data.agents) || [];
+  $("feed").replaceChildren(...agents.map(message));
+  $("feed").hidden = agents.length === 0;
+  $("empty").hidden = agents.length > 0;
+  const pending = agents.filter((a) => a.stage === "published").length;
+  $("sub").textContent = [day(data.date), waiting(pending, agents.length)].filter(Boolean).join(" · ") || " ";
+  if (openId) syncDoc();
+  if (firstRender) {  // ссылка на экран с #<id> — сразу к документу агента
+    firstRender = false;
+    let id = "";
+    try { id = decodeURIComponent(location.hash.slice(1)); } catch (_) { /* битый #… — просто лента */ }
+    const m = id && document.getElementById("m-" + id);
+    if (m) m.scrollIntoView({block: "start"});
+  }
+}
+
+async function load() {
+  if (loading) return;
+  loading = true;
+  const d = await api("agents" + (DATE ? "?date=" + DATE : ""));
+  loading = false;
+  if (!d) return;
+  if (d.error) { $("sub").textContent = d.error; return; }
+  loginTries = 0;
+  data = d;
+  render();
+}
+
+// ---- всплывающее сообщение и подпись под полем
+let toastTimer = 0;
+function toast(text) {
+  const t = $("toast");
+  t.textContent = text;
+  t.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.hidden = true; }, 3000);
+}
+let noteTimer = 0;
+function note(text, error) {
+  const n = $("compose-note");
+  n.textContent = text;
+  n.classList.toggle("is-error", !!error);
+  n.hidden = false;
+  clearTimeout(noteTimer);
+  if (!error) noteTimer = setTimeout(() => { n.hidden = true; }, 3000);
+}
+
+// ---- документ во весь экран
+function syncDoc() {
+  const a = find(openId);
+  if (!a) return;
+  const on = a.stage === "reviewed";
+  const b = $("doc-review");
+  b.setAttribute("aria-pressed", on ? "true" : "false");
+  b.classList.toggle("ds-btn--primary", !on);
+  b.textContent = on ? "Проверено ✓" : "✓ Проверено";
+  b.title = on ? "Снять отметку" : "Отметить проверенным";
+}
+
+function openDoc(id) {
+  const a = find(id);
+  if (!a || !a.doc_url) return;
+  openId = id;
+  const u = new URL(a.doc_url, location.href);  // тот же сайт: куки гейта и frame-src 'self'
+  $("doc-frame").src = u.pathname + u.search;
+  $("doc-name").textContent = agentName(a);
+  $("remark").value = drafts[id] || "";
+  $("compose-note").hidden = true;
+  grow(); updateSend(); syncDoc();
+  $("doc").hidden = false;
+  $("scrim").classList.add("is-open");
+  document.documentElement.classList.add("ar-lock");
+  history.pushState({doc: id}, "");
+  $("doc-back").focus();
+}
+
+function closeDoc() {
+  if (!openId) return;
+  const id = openId;
+  openId = "";
+  drafts[id] = $("remark").value;
+  $("doc").hidden = true;
+  $("scrim").classList.remove("is-open");
+  document.documentElement.classList.remove("ar-lock");
+  $("doc-frame").removeAttribute("src");
+  const t = document.getElementById("t-" + id);
+  if (t && !t.hidden) t.scrollIntoView({block: "nearest"});
+  const btn = document.querySelector(`[data-open="${CSS.escape(id)}"]`);
+  if (btn) btn.focus({preventScroll: true});
+}
+
+function back() {
+  if (history.state && history.state.doc) history.back();  // popstate закроет
+  else closeDoc();
+}
+window.addEventListener("popstate", () => { if (openId) closeDoc(); });
+$("doc-back").addEventListener("click", back);
+$("scrim").addEventListener("click", back);
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && openId) back(); });
+$("feed").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-open]");
+  if (b) openDoc(b.dataset.open);
+});
+
+$("doc-review").addEventListener("click", async () => {
+  const a = find(openId);
+  if (!a) return;
+  const on = a.stage !== "reviewed";
+  const b = $("doc-review");
+  b.disabled = true;
+  const d = await api(`agents/${encodeURIComponent(a.id)}/review`, {on});
+  b.disabled = false;
+  if (!d) return;
+  if (d.error) return toast(d.error);
+  (find(a.id) || a).stage = d.stage;  // пока ждали, load() мог заменить data
+  render();
+  toast(on ? "Отмечено: проверено" : "Отметка снята");
+});
+
+// ---- замечание агенту: Enter — отправить, Shift+Enter — перенос
+function grow() {
+  const ta = $("remark");
+  ta.style.height = "auto";
+  ta.style.height = Math.min(ta.scrollHeight + 2, 160) + "px";
+}
+function updateSend() { $("send").disabled = sending || !$("remark").value.trim(); }
+
+async function send() {
+  const a = find(openId);
+  const ta = $("remark");
+  const text = ta.value.trim();
+  if (!a || !text || sending) return;
+  if (new TextEncoder().encode(JSON.stringify({text})).length > BODY_MAX) return note("Слишком длинно — сократите", true);
+  sending = true;
+  updateSend();
+  const d = await api(`agents/${encodeURIComponent(a.id)}/remark`, {text});
+  sending = false;
+  updateSend();
+  if (!d) return;
+  if (d.error) return note(d.error, true);
+  const cur = find(a.id) || a;  // пока ждали, load() мог заменить data (и уже принести это замечание)
+  cur.remarks = cur.remarks || [];
+  if (!cur.remarks.some((r) => r.id === d.remark.id)) cur.remarks.push(d.remark);
+  if (openId === a.id) { ta.value = ""; grow(); updateSend(); }
+  drafts[a.id] = "";
+  if (d.order) {
+    data.orders = (data.orders || []).filter((o) => o.id !== d.order.id).concat([d.order]);
+  }
+  render();
+  note(d.order ? "Поручение принято ✓ — агент исполнит и отпишется вам лично" : "Передано агенту ✓");
+}
+
+$("remark").addEventListener("input", () => { grow(); updateSend(); });
+$("remark").addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey && !e.isComposing && e.keyCode !== 229) { e.preventDefault(); send(); }
+});
+$("compose").addEventListener("submit", (e) => { e.preventDefault(); send(); });
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible" && !loginShown) load();
+});
+load();
+
+</script>
+</body>
+</html>
