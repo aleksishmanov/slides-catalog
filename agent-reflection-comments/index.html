@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Рефлексия ИИ-агентов: комментарий выравнивает знания человека и агента</title>
+<meta name="description" content="Каждое утро PO-агенты сдают рефлексию по ключевым пунктам движения к целям квартала. Руководитель комментирует расхождения — и комментарий сразу становится знанием агента: поправкой факта, уроком или поручением. Так знание человека и знание ИИ сходятся в одну картину.">
+<link rel="canonical" href="https://slides.aleksishmanov.ru/agent-reflection-comments/">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Каталог презентаций · Алексей Ишманов">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://slides.aleksishmanov.ru/agent-reflection-comments/">
+<meta property="og:title" content="Рефлексия ИИ-агентов: комментарий выравнивает знания человека и агента">
+<meta property="og:description" content="Каждое утро PO-агенты сдают рефлексию по ключевым пунктам движения к целям квартала. Руководитель комментирует расхождения — и комментарий сразу становится знанием агента: поправкой факта, уроком или поручением. Так знание человека и знание ИИ сходятся в одну картину.">
+<meta property="og:image" content="https://slides.aleksishmanov.ru/agent-reflection-comments/cover.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="720">
+<meta property="og:image:alt" content="Первый слайд презентации «Рефлексия ИИ-агентов»">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Рефлексия ИИ-агентов: комментарий выравнивает знания человека и агента">
+<meta name="twitter:description" content="Каждое утро PO-агенты сдают рефлексию по ключевым пунктам движения к целям квартала. Руководитель комментирует расхождения — и комментарий сразу становится знанием агента: поправкой факта, уроком или поручением. Так знание человека и знание ИИ сходятся в одну картину.">
+<meta name="twitter:image" content="https://slides.aleksishmanov.ru/agent-reflection-comments/cover.png">
+<meta name="twitter:image:alt" content="Первый слайд презентации «Рефлексия ИИ-агентов»">
+<style>
+  /* Айдентика каталога (как agent-self-reflection): бежевый фон, чёрный и синий, моноширинные подписи,
+     карточки с жёсткой тенью. Снимки и демо — настоящие экраны на вымышленных данных. */
+  :root { --bg:#efeee8; --ink:#080808; --blue:#2437ed; --muted:#51514b; --line:#c9c8c2; --red:#d8302a; --amber:#d29b1f; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: #d9d8d3; }
+  body { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; color: var(--ink); overflow: hidden; }
+  #stage { position: fixed; left: 0; top: 0; width: 1280px; height: 720px; flex: none; transform-origin: 0 0; }
+  .slide { position: absolute; inset: 0; padding: 76px 72px 60px; display: none; flex-direction: column; justify-content: flex-start; background: var(--bg); overflow: hidden; }
+  .slide.on { display: flex; }
+  .slide.center { justify-content: center; padding-top: 64px; }
+  .accent { color: var(--blue); }
+  h1 { font-size: 66px; line-height: 1.03; letter-spacing: -.045em; font-weight: 800; }
+  h2 { font-size: 48px; line-height: 1.06; letter-spacing: -.04em; font-weight: 800; margin-bottom: 28px; }
+  .label { font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; font-size: 15px; font-weight: 700; letter-spacing: .08em; color: var(--blue); margin-bottom: 20px; text-transform: uppercase; }
+  .lead { font-size: 24px; line-height: 1.4; margin-top: 26px; max-width: 780px; }
+  .quote { border-left: 5px solid var(--blue); padding: 4px 0 4px 22px; font-size: 26px; line-height: 1.34; font-weight: 700; margin-top: 30px; }
+  .line { font-size: 21px; line-height: 1.4; color: var(--muted); }
+  .note { font-size: 15px; color: var(--muted); margin-top: 18px; line-height: 1.45; }
+  .slide > .note { padding-right: 150px; }  /* справа внизу — навигация */
+  /* титул */
+  .cover { display: grid; grid-template-columns: minmax(0,1fr) 300px; gap: 56px; align-items: center; }
+  .photo { width: 300px; height: 300px; object-fit: cover; border: 1px solid var(--ink); box-shadow: 8px 8px 0 var(--blue); display: block; }
+  .site { display: flex; justify-content: space-between; margin-top: 22px; border: 1px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); text-decoration: none; color: var(--ink); }
+  .site span { font-family: "JetBrains Mono", monospace; font-size: 17px; font-weight: 700; padding: 13px 16px; }
+  .site i { display: flex; align-items: center; justify-content: center; width: 46px; background: var(--blue); color: #fff; font-style: normal; }
+  .kicker { font-family: "JetBrains Mono", monospace; font-size: 16px; font-weight: 700; letter-spacing: .06em; color: var(--muted); margin-bottom: 22px; }
+  /* реплики */
+  .talk { display: flex; flex-direction: column; gap: 18px; margin-top: 4px; max-width: 920px; }
+  .said { display: inline-block; align-self: flex-start; background: var(--ink); color: #fff; font-size: 24px; line-height: 1.35; padding: 12px 18px; border-radius: 14px 14px 14px 2px; max-width: 820px; }
+  .said.r { align-self: flex-end; background: #fff; color: var(--ink); border: 1px solid var(--ink); border-radius: 14px 14px 2px 14px; }
+  .said.bad { border-color: var(--red); box-shadow: 4px 4px 0 var(--red); }
+  .said.good { border-color: var(--blue); box-shadow: 4px 4px 0 var(--blue); }
+  .said small { display: block; font-family: "JetBrains Mono", monospace; font-size: 12px; letter-spacing: .06em; opacity: .7; margin-bottom: 4px; }
+  /* карточки и шаги */
+  .cards { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 24px; }
+  .cards.four { grid-template-columns: repeat(4, minmax(0,1fr)); gap: 18px; margin-top: 8px; }
+  .card { border: 1px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); padding: 22px 24px 24px; background: var(--bg); }
+  .card.blue { border-color: var(--blue); box-shadow: 6px 6px 0 var(--blue); }
+  .card h3 { font-size: 24px; line-height: 1.15; letter-spacing: -.025em; margin-bottom: 10px; }
+  .card p { font-size: 18px; line-height: 1.4; color: var(--muted); }
+  .cards.four .card { padding: 18px 18px 20px; }
+  .cards.four .card h3 { font-size: 21px; } .cards.four .card p { font-size: 16px; }
+  .cards.roomy .card { padding: 24px 28px 26px; } .cards.roomy .card h3 { font-size: 27px; margin-bottom: 12px; } .cards.roomy .card p { font-size: 19px; }
+  .steps { display: grid; grid-template-columns: 1fr 36px 1fr 36px 1fr 36px 1fr; align-items: stretch; }
+  .steps > .arr { display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 800; color: var(--blue); }
+  .steps .card { padding: 20px 18px; }
+  .steps .card h3 { font-size: 22px; } .steps .card p { font-size: 16px; }
+  .tag { display: inline-block; font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 700; letter-spacing: .08em; background: var(--ink); color: var(--bg); padding: 5px 10px; margin-bottom: 14px; }
+  .card.blue .tag { background: var(--blue); }
+  .three { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 22px; }
+  .three .card { padding: 22px 22px 24px; }
+  .three .card h3 { font-size: 23px; } .three .card p { font-size: 17px; }
+  /* список с картинкой */
+  .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 44px; flex: 1; min-height: 0; align-items: start; }
+  .split.wide { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); }
+  ul.lim { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+  ul.lim li { font-size: 20px; line-height: 1.38; display: grid; grid-template-columns: 34px 1fr; }
+  ul.lim li::before { content: "→"; color: var(--blue); font-weight: 800; }
+  ol.rit { list-style: none; counter-reset: r; display: flex; flex-direction: column; gap: 12px; }
+  ol.rit li { counter-increment: r; display: grid; grid-template-columns: 46px 1fr; align-items: baseline; font-size: 21px; line-height: 1.35; }
+  ol.rit li::before { content: counter(r); font-family: "JetBrains Mono", monospace; font-weight: 800; font-size: 18px; color: var(--muted); }
+  ol.rit li.hi { font-weight: 800; }
+  ol.rit li.hi::before { color: var(--blue); }
+  ol.rit li span { display: block; font-weight: 400; font-size: 16px; color: var(--muted); }
+  /* снимки экранов */
+  .shot { display: block; max-width: 100%; height: auto; border: 1px solid var(--ink); box-shadow: 6px 6px 0 var(--blue); background: #fff; }
+  .shot.ink { box-shadow: 6px 6px 0 var(--ink); }
+  .duo { display: grid; grid-template-columns: 220px minmax(0,1fr); gap: 40px; align-items: start; flex: none; }
+  .duo .phone { width: 220px; height: 400px; object-fit: cover; object-position: top; border-radius: 22px; }
+  .duo .desk { max-height: 400px; width: auto; }
+  .cap { font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-top: 12px; }
+  .doc { max-height: 470px; width: auto; }
+  /* схема */
+  .flow { display: grid; grid-template-columns: minmax(0,1fr) 40px minmax(0,1.2fr) 40px minmax(0,1fr); align-items: stretch; flex: none; margin-top: 4px; }
+  .flow > .arr { display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 800; color: var(--blue); }
+  .zone { border: 2px dashed var(--blue); padding: 16px 18px 6px; background: rgba(36,55,237,.05); display: flex; flex-direction: column; }
+  .zone.out { border-color: var(--ink); background: transparent; }
+  .zone .zl { font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--blue); margin-bottom: 12px; }
+  .zone.out .zl { color: var(--muted); }
+  .node { border: 1px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); background: #fff; padding: 11px 14px 12px; margin-bottom: 14px; font-size: 16px; line-height: 1.35; color: var(--muted); }
+  .node b { display: block; font-size: 19px; line-height: 1.2; color: var(--ink); margin-bottom: 3px; letter-spacing: -.02em; }
+  .node.blue { border-color: var(--blue); box-shadow: 4px 4px 0 var(--blue); }
+  /* сравнение исполнителей */
+  .cmp { display: grid; grid-template-columns: 190px minmax(0,1fr) minmax(0,1fr); border: 1px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); background: #fff; }
+  .cmp > div { padding: 15px 18px; border-bottom: 1px solid var(--line); font-size: 19px; line-height: 1.35; }
+  .cmp > div:nth-last-child(-n+2) { border-bottom: none; }
+  .cmp .span2 { grid-column: span 2; }
+  .cmp .h { background: var(--ink); color: #fff; font-weight: 800; font-size: 20px; border-bottom: none; }
+  .cmp .h.b { background: var(--blue); }
+  .cmp .k { font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; }
+  .cmp .h.k { color: #fff; }
+  /* цифры */
+  .fact { display: grid; grid-template-columns: minmax(0,1fr) 430px; gap: 56px; align-items: center; flex: 1; }
+  .big { font-size: 190px; line-height: .9; letter-spacing: -.06em; font-weight: 800; color: var(--blue); }
+  .big small { font-size: 56px; letter-spacing: -.03em; margin-left: 10px; }
+  .big + .line { font-size: 26px; color: var(--ink); margin-top: 26px; line-height: 1.35; }
+  .kpis { display: flex; flex-direction: column; gap: 18px; }
+  .kpi { border: 1px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); background: #fff; padding: 14px 20px; }
+  .kpi.red { border-color: var(--red); box-shadow: 6px 6px 0 var(--red); }
+  .kpi b { display: block; font-size: 42px; line-height: 1; letter-spacing: -.04em; }
+  .kpi.red b { color: var(--red); }
+  .kpi span { display: block; font-size: 16px; color: var(--muted); margin-top: 6px; line-height: 1.3; }
+  /* финал */
+  .final { display: grid; grid-template-columns: minmax(0,1fr) 560px; gap: 50px; align-items: center; height: 100%; }
+  .final h1 { font-size: 58px; }
+  .term { background: var(--ink); color: #e9e8e2; font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; font-size: 16px; line-height: 1.9; padding: 24px 28px; box-shadow: 8px 8px 0 var(--blue); white-space: pre-wrap; }
+  .term i { font-style: normal; color: #9fb0ff; }
+  .repo { display: inline-block; margin-top: 28px; font-size: 21px; font-weight: 700; color: var(--blue); text-decoration: none; border-bottom: 3px solid var(--blue); padding-bottom: 4px; }
+  /* навигация */
+  #nav { position: fixed; right: 18px; bottom: 16px; z-index: 40; display: flex; align-items: center; gap: 8px; background: rgba(239,238,232,.95); border: 1px solid var(--ink); padding: 5px 9px; }
+  #nav button { font: inherit; font-size: 16px; width: 26px; height: 24px; cursor: pointer; background: none; border: none; }
+  #nav .p { font-family: "JetBrains Mono", monospace; font-size: 12px; min-width: 46px; text-align: center; }
+  #bar { position: fixed; left: 0; top: 0; height: 3px; background: var(--blue); z-index: 41; transition: width .18s; }
+  /* Телефон: слайды лентой без масштаба. */
+  @media (max-width: 700px), (orientation: portrait) and (max-width: 900px) {
+    html, body { height: auto; overflow: auto; display: block; background: var(--bg); }
+    #stage { position: static; width: auto; height: auto; transform: none !important; }
+    .slide { position: relative; inset: auto; display: flex !important; padding: 40px 18px 44px; border-bottom: 1px solid var(--line); }
+    .slide.center { padding-top: 40px; }
+    #nav, #bar { display: none; }
+    .slide > .note { padding-right: 0; }
+    h1, .final h1 { font-size: 36px; } h2 { font-size: 30px; margin-bottom: 22px; }
+    .lead { font-size: 18px; } .quote { font-size: 20px; } .line { font-size: 17px; }
+    .cover, .fact, .final, .split, .split.wide { grid-template-columns: 1fr; gap: 26px; height: auto; }
+    .photo { width: 150px; height: 150px; } .site { max-width: 260px; }
+    .said { font-size: 18px; }
+    .cards, .cards.four, .three { grid-template-columns: 1fr; gap: 16px; }
+    .steps { grid-template-columns: 1fr; } .steps > .arr { height: 30px; transform: rotate(90deg); }
+    ul.lim li, ol.rit li { font-size: 17px; }
+    .duo { grid-template-columns: 1fr; gap: 24px; }
+    .duo .phone { width: 100%; max-width: 300px; height: auto; }
+    .duo .desk, .doc { max-height: none; width: 100%; }
+    .flow { grid-template-columns: 1fr; } .flow > .arr { height: 30px; transform: rotate(90deg); }
+    .cmp { grid-template-columns: 1fr; } .cmp > div { border-bottom: 1px solid var(--line); } .cmp > div:nth-last-child(-n+2) { border-bottom: 1px solid var(--line); } .cmp .span2 { grid-column: auto; }
+    .cmp .k { background: #f3f2ec; padding-top: 8px; padding-bottom: 8px; } .cmp .h.k { display: none; }
+    .big { font-size: 104px; } .big small { font-size: 32px; } .big + .line { font-size: 19px; }
+    .kpi b { font-size: 34px; }
+    .term { font-size: 14px; padding: 18px; }
+    .repo { font-size: 17px; word-break: break-all; }
+  }
+  ol.rit li span { grid-column: 2; }
+  /* галерея снимков: пункт справа меняет снимок, клик — на весь экран */
+  .gal { display: grid; grid-template-columns: minmax(0,1fr) 250px; gap: 26px; flex: 1; min-height: 0; }
+  .gmain { position: relative; border: 1px solid var(--ink); box-shadow: 6px 6px 0 var(--blue); background: #f6f6f4; overflow: hidden; cursor: zoom-in; display: flex; flex-direction: column; }
+  .gmain .gimg { flex: 1; min-height: 0; }
+  .gmain img { width: 100%; height: 100%; object-fit: contain; object-position: top center; display: block; }
+  .gcap { background: var(--ink); color: #fff; padding: 11px 18px; display: flex; gap: 14px; align-items: baseline; }
+  .gcap span { font-family: "JetBrains Mono", monospace; font-size: 13px; color: #9fb0ff; }
+  .gcap b { font-size: 18px; } .gcap em { font-style: normal; font-size: 16px; opacity: .85; }
+  .glist { display: flex; flex-direction: column; gap: 4px; }
+  .glist button { font: inherit; text-align: left; background: none; border: 1px solid transparent; padding: 8px 12px; cursor: pointer; display: flex; gap: 12px; align-items: baseline; font-size: 17px; color: var(--muted); }
+  .glist button i { font-style: normal; font-family: "JetBrains Mono", monospace; font-size: 12px; color: var(--muted); }
+  .glist button.on { border-color: var(--blue); color: var(--ink); font-weight: 700; box-shadow: 4px 4px 0 var(--blue); background: #fff; }
+  .glist button.on i { color: var(--blue); }
+  .glist .glive { margin-top: auto; display: block; box-shadow: 4px 4px 0 var(--ink); font-size: 16px; font-weight: 700; background: var(--blue); color: #fff; border: 0; padding: 12px 14px; }
+  /* живое демо на слайде */
+  .demo { position: relative; flex: 1; min-height: 0; border: 1px solid var(--ink); box-shadow: 6px 6px 0 var(--blue); background: #fff; overflow: hidden; }
+  .demo iframe { width: 142.86%; height: 142.86%; transform: scale(.7); transform-origin: 0 0; border: 0; display: block; }
+  .fs-btn { position: absolute; right: 16px; bottom: 16px; z-index: 3; font: inherit; font-size: 15px; font-weight: 700; padding: 10px 16px; cursor: pointer; background: var(--blue); color: #fff; border: none; box-shadow: 4px 4px 0 var(--ink); }
+  .demo-loader { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: #fff; font-family: "JetBrains Mono", monospace; font-size: 13px; color: var(--muted); transition: opacity .25s; }
+  .demo-loader.done { opacity: 0; pointer-events: none; }
+  .spin { width: 28px; height: 28px; border: 3px solid var(--line); border-top-color: var(--blue); border-radius: 50%; animation: spin .8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .demo-row { display: grid; grid-template-columns: minmax(0,1fr) 300px; gap: 30px; flex: 1; min-height: 0; }
+  .try { display: flex; flex-direction: column; gap: 12px; }
+  .try ol { list-style: none; counter-reset: t; display: flex; flex-direction: column; gap: 12px; }
+  .try li { counter-increment: t; display: grid; grid-template-columns: 30px 1fr; font-size: 18px; line-height: 1.38; }
+  .try li::before { content: counter(t); font-family: "JetBrains Mono", monospace; font-weight: 800; color: var(--blue); }
+  .try .dl { display: inline-block; margin-top: 6px; font-size: 16px; font-weight: 700; color: var(--blue); text-decoration: none; border-bottom: 2px solid var(--blue); align-self: flex-start; }
+  /* оверлеи: снимок и демо на весь экран */
+  #lb, #dfs { position: fixed; inset: 0; z-index: 50; display: none; flex-direction: column; }
+  #lb.on, #dfs.on { display: flex; }
+  #lb { background: rgba(10,10,10,.95); } #dfs { background: #fff; }
+  .ov-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px; font-size: 16px; }
+  #lb .ov-top { color: #fff; } #dfs .ov-top { background: var(--ink); color: #fff; }
+  .ov-x { font: inherit; font-family: "JetBrains Mono", monospace; font-size: 13px; font-weight: 700; background: none; color: inherit; border: 1px solid currentColor; padding: 6px 12px; cursor: pointer; }
+  #lb .body { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 0 22px 22px; overflow: auto; }
+  #lb img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  .dfs-body { position: relative; flex: 1; display: flex; } .dfs-body iframe { flex: 1; border: 0; }
+  /* листы документа рядом */
+  .sheets { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 22px; align-items: start; }
+  .sheets img { width: 100%; height: auto; display: block; border: 1px solid var(--ink); box-shadow: 5px 5px 0 var(--ink); background: #fff; cursor: zoom-in; }
+  .sheets img { height: 480px; object-fit: cover; object-position: top; }
+  .final h1.tight { font-size: 46px; }
+  .sheets img.hl { box-shadow: 5px 5px 0 var(--blue); border-color: var(--blue); }
+  .zoom { cursor: zoom-in; }
+  .crop { width: 100%; max-height: 470px; object-fit: cover; object-position: top; }
+  /* лента и мессенджер: схема по реальным сообщениям */
+  .feed { background: #fff; border: 1px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; font-size: 16px; line-height: 1.4; }
+  .post { display: grid; grid-template-columns: 36px minmax(0,1fr); gap: 10px; }
+  .post .av { width: 36px; height: 36px; border-radius: 50%; background: var(--ink); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 17px; }
+  .post .av.b { background: var(--blue); }
+  .post .who { font-size: 13px; color: var(--muted); font-family: "JetBrains Mono", monospace; }
+  .post .who b { color: var(--ink); font-family: Inter, sans-serif; font-size: 15px; margin-right: 6px; }
+  .post.reply { margin-left: 46px; }
+  .thumbs { display: flex; gap: 6px; margin-top: 6px; }
+  .thumbs img { width: 58px; height: 82px; object-fit: cover; object-position: top; border: 1px solid var(--line); }
+  .files { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .files span { font-family: "JetBrains Mono", monospace; font-size: 12px; border: 1px solid var(--ink); padding: 3px 8px; }
+  .mention { color: var(--blue); font-weight: 600; }
+  .scheme { font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-top: 10px; }
+  .x-link { color: var(--blue); font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--blue); }
+  @media (max-width: 700px), (orientation: portrait) and (max-width: 900px) {
+    .gal, .demo-row { grid-template-columns: 1fr; }
+    .gmain .gimg { aspect-ratio: 4 / 3; flex: none; }
+    .glist { flex-direction: row; overflow-x: auto; gap: 6px; } .glist button { flex: none; font-size: 15px; padding: 7px 10px; white-space: nowrap; }
+    .glist .glive { margin-top: 0; }
+    .gcap { flex-wrap: wrap; } .gcap em { font-size: 15px; }
+    .demo { flex: none; height: 110px; } .demo iframe, .demo .demo-loader { display: none; }
+    .fs-btn { left: 16px; right: 16px; top: 50%; bottom: auto; transform: translateY(-50%); padding: 14px; }
+    .try li { font-size: 16px; }
+    .sheets { grid-template-columns: 1fr; gap: 18px; }
+    .sheets img { height: auto; }
+    .final h1.tight { font-size: 34px; }
+    .crop { max-height: none; }
+    .feed { font-size: 15px; padding: 14px; } .post.reply { margin-left: 20px; }
+  }
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div id="stage">
+<section class="slide center on" data-title="Титул">
+    <div class="cover"><div>
+      <p class="kicker">PO-АГЕНТЫ · УТРЕННЯЯ РЕФЛЕКСИЯ · КОММЕНТАРИИ</p>
+      <h1>Рефлексия<br><span class="accent">ИИ-агентов</span></h1>
+      <p class="lead">Утром агенты готовят рефлексию по ключевым пунктам движения к цели. Я комментирую расхождения — и наши картины сходятся.</p>
+      <p class="quote">Я знаю то, чего нет в Jira.<br>Агент видит то, что я не успел прочитать.</p>
+    </div><div><img class="photo" id="coverPhoto" alt="Автор"><a class="site" href="https://aleksishmanov.ru/" target="_blank" rel="noopener"><span>aleksishmanov.ru</span><i>↗</i></a></div></div>
+  </section>
+
+  <section class="slide" data-title="Два знания">
+    <p class="label">Проблема</p>
+    <h2>Два знания о цели — <span class="accent">и они расходятся каждый день</span></h2>
+    <div class="cards roomy">
+      <div class="card"><span class="tag">ЗНАЮ Я</span><h3>То, что сказано, но не записано</h3><p>Решение комитета в коридоре. Звонок партнёру в понедельник. Что на самом деле важно руководству. Какой риск я уже снял, а какой — нет.</p></div>
+      <div class="card blue"><span class="tag">ЗНАЕТ АГЕНТ</span><h3>Всё, что записано, но не прочитано</h3><p>Каждая задача в Jira, все чаты ленты, расшифровки созвонов, темп за три спринта, блокеры и сроки. Больше, чем я успеваю прочитать за неделю.</p></div>
+    </div>
+    <p class="lead">Без ежедневной сверки агент уверенно отвечает по своей половине картины, а я принимаю решения по своей.</p>
+  </section>
+
+  <section class="slide" data-title="Идея">
+    <p class="label">Идея</p>
+    <h2>Рефлексия — <span class="accent">точка сверки</span>, комментарий — канал выравнивания</h2>
+    <div class="steps">
+      <div class="card"><span class="tag">08:50 · АГЕНТ</span><h3>Сдаёт свою картину</h3><p>По целям квартала: что сдвинулось, что держит, какие риски, что мне сделать сегодня.</p></div>
+      <div class="arr">→</div>
+      <div class="card"><span class="tag">УТРО · Я</span><h3>Читаю 5 минут</h3><p>Ищу не ошибки, а расхождения: где картина агента не совпадает с моей.</p></div>
+      <div class="arr">→</div>
+      <div class="card blue"><span class="tag">КОММЕНТАРИЙ</span><h3>Пишу, где не так</h3><p>Одной фразой прямо под документом — с телефона, без формы и полей.</p></div>
+      <div class="arr">→</div>
+      <div class="card"><span class="tag">АГЕНТ</span><h3>Учитывает</h3><p>Комментарий сразу в его знании. Ответ, урок и правка — в ближайший проход.</p></div>
+    </div>
+    <p class="note">Документ рефлексии — не отчёт для меня. Это способ показать мне, что агент понял, чтобы я мог поправить до того, как он ответит кому-то ещё.</p>
+  </section>
+
+  <section class="slide" data-title="Утро">
+    <p class="label">Как выглядит утро</p>
+    <h2>Рефлексии ждут меня <span class="accent">к началу рабочего дня</span></h2>
+    <div class="split wide">
+      <ol class="rit">
+        <li>08:30 — сбор<span>снимки Jira, блокеры, выпуск ленты, рефлексии созвонов за 3 дня</span></li>
+        <li class="hi">08:50 — каждый агент пишет свою рефлексию<span>у каждого своя минута; механику делает скрипт, смысл — модель</span></li>
+        <li>09:05 — страховка<span>нет рефлексии — её пишет Claude Code за агента, по тем же правилам</span></li>
+        <li class="hi">Утро — карточка в Инбоксе<span>«🪞 Рефлексия агентов · 2 ждут проверки»: тап — и я в чате с документами</span></li>
+      </ol>
+      <div><img class="shot zoom" src="/agent-self-reflection/img/card.webp" alt="Карточка «Рефлексия агентов» в Инбоксе" loading="lazy" width="840" height="322"><p class="cap">Карточка на «Сегодня» в Инбоксе</p>
+        <p class="line" style="margin-top:22px">Не успел агент — сорвавшийся прогон встаёт в очередь и повторяется. Пропуск не исчезает назавтра.</p></div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Пункты движения к цели">
+    <p class="label">Что агент сдаёт</p>
+    <h2>Ключевые пункты <span class="accent">движения к цели</span></h2>
+    <div class="split wide">
+      <ol class="rit">
+        <li class="hi">Главное за сутки одной фразой<span>и что изменилось со вчера</span></li>
+        <li class="hi">Цели квартала: OBJ → KR<span>«в графике», «есть риск», «под угрозой»; что сделано, что дальше, что держит</span></li>
+        <li>Чем занят каждый в команде</li>
+        <li>Риски по моим коммитментам<span>и кому эскалировать</span></li>
+        <li>Сегодня тебе · согласовать · делегировать</li>
+        <li>Вопросы агента — не больше трёх</li>
+      </ol>
+      <div><img class="shot zoom crop" src="img/doc-goals.webp" alt="Документ рефлексии: главное, изменения и цели квартала с KR" loading="lazy" width="1200" height="1116"><p class="cap">Документ рефлексии · демо-данные</p></div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Ноль выдумки">
+    <p class="label">Правила агента</p>
+    <h2>Агент пишет только <span class="accent">то, что есть в данных</span></h2>
+    <div class="split wide">
+      <div class="three" style="grid-template-columns:1fr; gap:16px">
+        <div class="card"><h3>OBJ и KR — только из карты целей</h3><p>Эпик без цели не привязывается догадкой: он становится вопросом мне.</p></div>
+        <div class="card"><h3>Мои правки — факт</h3><p>Что я поправил в бизнес-колоде или в комментарии, агент не переписывает и перечисляет в «Принято от PO».</p></div>
+        <div class="card blue"><h3>Чего нет — «[УТОЧНИТЬ]»</h3><p>Цифры, сроки и фамилии не берутся из головы. Не хватает данных — вопрос, а не уверенный тон.</p></div>
+      </div>
+      <div><img class="shot zoom crop" src="img/doc-today.webp" alt="Документ рефлексии: риски, что сделать сегодня, вопросы агента" loading="lazy" width="1200" height="879"><p class="cap">Риски, «Сегодня», вопросы агента</p></div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Интерфейс">
+    <p class="label">Интерфейс</p>
+    <h2>Экран «🪞 Рефлексия агентов»</h2>
+    <div class="gal"><div class="gmain"><div class="gimg"><img class="gpic" src="img/desk-feed.webp" alt="Чат с документами агентов" decoding="async" loading="lazy"></div><div class="gcap"><span class="gn">01 / 08</span><b class="gt">Чат с документами агентов</b><em class="gd">Главное, «Сегодня тебе», вопросы агента</em></div></div><div class="glist"><button data-src="img/desk-feed.webp" data-t="Чат с документами агентов" data-d="Главное, «Сегодня тебе», вопросы агента" class=on><i>01</i>Чат агентов</button><button data-src="img/phone-feed.webp" data-t="Телефон" data-d="Тот же экран на iPhone — так я читаю утром"><i>02</i>Телефон</button><button data-src="img/doc-full.webp" data-t="Документ целиком" data-d="Цели, команда, риски, сегодня, вопросы, статусы"><i>03</i>Документ</button><button data-src="img/desk-doc.webp" data-t="Комментарий" data-d="Документ во весь экран, внизу — поле для агента"><i>04</i>Комментарий</button><button data-src="img/desk-sent.webp" data-t="Передано агенту" data-d="Комментарий сразу встаёт в ветку под документом"><i>05</i>Передано</button><button data-src="img/desk-answer.webp" data-t="Ответ и урок" data-d="Агент отвечает и записывает урок"><i>06</i>Ответ и урок</button><button data-src="img/phone-thread.webp" data-t="Поручение" data-d="Прямой приказ исполняется в Jira, статус — всегда"><i>07</i>Поручение</button><button data-src="img/phone-doc.webp" data-t="С телефона" data-d="Прочитал, написал, «✓ Проверено»"><i>08</i>С телефона</button><button class="glive" data-src="demo/screen.html" data-title="Рефлексия агентов · демо-данные">Попробовать экран ↗</button></div></div>
+  </section>
+
+  <section class="slide" data-title="Три вида комментария">
+    <p class="label">Выравнивание</p>
+    <h2>Комментарий бывает трёх видов — <span class="accent">тип выбирать не нужно</span></h2>
+    <div class="three">
+      <div class="card"><span class="tag">ПОПРАВКА ФАКТА</span><h3>«Партнёр не молчит: я звонил в понедельник»</h3><p>Я знаю то, чего нет в системах. Агент исправляет картину и больше не считает молчание по одной Jira.</p></div>
+      <div class="card"><span class="tag">СМЫСЛ И ПРИОРИТЕТ</span><h3>«Конверсию считаю по сплиту, не по экрану»</h3><p>Как я оцениваю цель. Агент записывает это уроком и завтра оценивает KR моим способом.</p></div>
+      <div class="card blue"><span class="tag">ПОРУЧЕНИЕ</span><h3>«Заведи задачу Сорокину, срок 26.11»</h3><p>Прямой приказ. Агент исполняет в Jira, календаре или моём «Я обещал» и докладывает лично.</p></div>
+    </div>
+    <p class="note">Писать можно как в мессенджере: без шаблона, тегов и выбора типа.</p>
+  </section>
+
+  <section class="slide" data-title="Путь комментария">
+    <p class="label">Что происходит с комментарием</p>
+    <h2>Комментарий становится <span class="accent">знанием агента</span></h2>
+    <div class="flow">
+      <div class="zone out"><div class="zl">Я · экран рефлексии</div>
+        <div class="node"><b>Комментарий</b>«KR 1.2 — не твоя оценка: конверсию я считаю по сплит-тесту»</div>
+      </div>
+      <div class="arr">→</div>
+      <div class="zone"><div class="zl">Сразу</div>
+        <div class="node blue"><b>В знание агента</b>его навык о команде — агент видит комментарий в любом чате, даже пока модель недоступна</div>
+        <div class="node"><b>В тред документа</b>в чате агентов, с упоминанием агента</div>
+      </div>
+      <div class="arr">→</div>
+      <div class="zone out"><div class="zl">Ближайший проход · завтра</div>
+        <div class="node"><b>Ответ и урок</b>«Принял: конверсию беру только из сплит-теста»</div>
+        <div class="node"><b>В завтрашней рефлексии</b>раздел «Учтённые замечания» — видно, что урок применён</div>
+      </div>
+    </div>
+    <p class="note">Слова руководителя для агента — достоверный источник: он не перепроверяет их по Jira, а перестраивает по ним свою картину.</p>
+  </section>
+
+  <section class="slide" data-title="Поручение">
+    <p class="label">Поручение из комментария</p>
+    <h2>Приказ в комментарии — <span class="accent">со статусом, который я получу всегда</span></h2>
+    <div class="duo">
+      <div><img class="shot phone zoom" src="img/phone-thread.webp" alt="Ветка под документом: комментарий, ответ с уроком, поручение исполнено" loading="lazy" width="600" height="1022"><p class="cap">Ветка под документом</p></div>
+      <div>
+        <ul class="lim">
+          <li>«Заведи», «добавь встречу», «запиши в беклог» — прямой приказ распознаётся сам и становится поручением</li>
+          <li>Исполняет там, где положено: задача в Jira, встреча в моём календаре, обещание в «Я обещал»</li>
+          <li>Докладывает лично в мой чат: что сделано и где проверить</li>
+          <li>Не доложил — контроль отбивается сам: через 10 минут «в работе», через 30 — «не выполнено» с причиной</li>
+        </ul>
+        <p class="quote" style="font-size:22px">Комментарий не теряется между «прочитал» и «сделал».</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Живое демо">
+    <p class="label">Попробуйте сами</p>
+    <h2>Живой экран <span class="accent">на демо-данных</span></h2>
+    <div class="demo-row">
+      <div class="demo"><div class="demo-loader"><div class="spin"></div>Загружаем живой экран…</div><iframe data-src="demo/screen.html" title="Экран рефлексии агентов, демо"></iframe><button class="fs-btn" data-src="demo/screen.html" data-title="Рефлексия агентов · демо-данные">На весь экран ↗</button></div>
+      <div class="try">
+        <ol>
+          <li>«Открыть документ» у PO-агента CAB</li>
+          <li>Внизу напишите комментарий — например, «удаление аккаунта переносим на январь»</li>
+          <li>Enter — комментарий встанет в ветку «передано агенту»</li>
+          <li>Через несколько секунд агент ответит и запишет урок</li>
+          <li>Начните с «Заведи…» — появится поручение со статусом</li>
+        </ol>
+        <p class="note">Это настоящий экран, только сервер подменён: люди, команды и задачи вымышлены, ответ агента в демо — шаблон.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Разговор после">
+    <p class="label">Что меняется</p>
+    <h2>В любом чате агент отвечает <span class="accent">по общей картине</span></h2>
+    <div class="talk">
+      <div class="said"><small>КОЛЛЕГА · ЧАТ КОМАНДЫ</small>Пилот оплаты частями точно стартует 8-го?</div>
+      <div class="said r bad"><small>PO-АГЕНТ · БЕЗ СВЕРКИ</small>Да, в Jira срок 08.12, задача в работе. Рисков не вижу.</div>
+      <div class="said r good"><small>PO-АГЕНТ · ПОСЛЕ РЕФЛЕКСИИ И КОММЕНТАРИЕВ</small>Срок 08.12, но он держится на вебхуке партнёра к 27.11. Запасной план отмены без вебхука — PAY-431, срок 26.11. Решение по комиссии — на комитете 24.11.</div>
+    </div>
+    <p class="note">Второй ответ собран из рефлексии, рефлексии созвона с партнёром и двух моих комментариев. Ни одного из этих фактов не было в задаче пилота.</p>
+  </section>
+
+  <section class="slide" data-title="Честно о слабых местах">
+    <p class="label">Честно о слабых местах</p>
+    <h2>Что пока не идеально</h2>
+    <div class="cards">
+      <div class="card"><h3>Ответ не мгновенный</h3><p>Комментарий сразу лежит в знании агента, а ответ «учёл» приходит в ближайший проход.</p></div>
+      <div class="card"><h3>Ценность — в расхождениях</h3><p>Документ — картина агента, а не истина. Если не читать его, сверки не случится.</p></div>
+      <div class="card"><h3>Качество — от карты целей</h3><p>Нет эпика в карте целей — агент спросит, и пока я не ответил, KR остаётся «без привязки».</p></div>
+      <div class="card"><h3>Данные — снимок утра</h3><p>Упал утренний сбор — рефлексия строится на вчерашних данных и пишет об этом в источниках.</p></div>
+    </div>
+  </section>
+
+  <section class="slide center" data-title="Итог">
+    <div class="final">
+      <div>
+        <h1 class="tight">Пять минут утром&nbsp;—<br><span class="accent">одна картина на&nbsp;день</span></h1>
+        <p class="lead">Агенты приносят знание систем, я — знание людей и решений. Комментарий соединяет их, и дальше агент отвечает за меня по той же картине, что у меня в голове.</p>
+        <a class="repo" href="https://github.com/po-helper-org/poh-widget-call-reflection" data-private-repo>github.com/po-helper-org/poh-widget-call-reflection 🔒</a>
+        <p class="note">Откуда агент знает о созвонах: <a class="x-link" href="/call-reflection-goals/">Рефлексия созвона →</a></p>
+      </div>
+      <div class="term"><i>08:30</i> сбор отчётов, ленты и созвонов
+<i>08:50</i> агенты: рефлексия по целям
+<i>09:05</i> страховка: Claude Code за агента
+<i>утро</i> Инбокс → 🪞 · 2 ждут проверки
+<i>комментарий</i> → знание агента
+         → ответ и урок
+         → поручение со статусом
+<i>завтра</i> «Учтённые замечания»</div>
+    </div>
+  </section>
+</div>
+
+<div id="lb">
+  <div class="ov-top"><b id="lbTitle"></b><button class="ov-x" id="lbX">Esc</button></div>
+  <div class="body"><img id="lbImg" alt=""></div>
+</div>
+<div id="dfs">
+  <div class="ov-top"><b id="dfsTitle"></b><button class="ov-x" id="dfsX">Esc</button></div>
+  <div class="dfs-body"><div class="demo-loader" id="dfsLoader"><div class="spin"></div>Загружаем живое демо…</div><iframe id="dfsFrame" title="Демо на весь экран"></iframe></div>
+</div>
+<div id="nav">
+  <button id="prev" title="Назад">‹</button><span class="p" id="pos"></span><button id="next" title="Вперёд">›</button>
+</div>
+<script>
+  var PHOTO = "/okr-quarter-planning/img/photo.webp";
+  var slides = [].slice.call(document.querySelectorAll('.slide'));
+  var cur = 0;
+  var narrow = window.matchMedia('(max-width: 700px), (orientation: portrait) and (max-width: 900px)');
+  /* Живые демо: iframe получает src, когда открыт его слайд или предыдущий; на телефоне — только по кнопке. */
+  function loaded(f) { try { return f.contentWindow.location.href !== 'about:blank'; } catch (e) { return true; } }
+  function loadDemos(slide) {
+    if (!slide || narrow.matches) return;
+    slide.querySelectorAll('iframe[data-src]:not([src])').forEach(function (f) {
+      var l = f.parentNode.querySelector('.demo-loader');
+      f.onload = function () { if (l && loaded(f)) l.classList.add('done'); };
+      f.src = f.getAttribute('data-src');
+    });
+  }
+  /* Снимки ленивые; после загрузки страницы догружаются в фоне, чтобы листание шло без пауз. */
+  window.addEventListener('load', function () {
+    setTimeout(function () { document.querySelectorAll('img[loading="lazy"]').forEach(function (im) { im.loading = 'eager'; }); }, 300);
+    if (narrow.matches && cur > 0) slides[cur].scrollIntoView();
+  });
+  function fit() {
+    var st = document.getElementById('stage');
+    if (narrow.matches) { st.style.transform = 'none'; st.style.left = st.style.top = ''; return; }
+    /* clientWidth/Height — видимая область без полосы прокрутки: слайд не съезжает вбок. */
+    var w = document.documentElement.clientWidth, h = document.documentElement.clientHeight;
+    var s = Math.min(w / 1280, h / 720);
+    st.style.left = Math.round((w - 1280 * s) / 2) + 'px';
+    st.style.top = Math.round((h - 720 * s) / 2) + 'px';
+    st.style.transform = 'scale(' + s + ')';
+  }
+  window.addEventListener('resize', fit); fit();
+  function show(i, push) {
+    cur = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach(function (s, k) { s.classList.toggle('on', k === cur); });
+    loadDemos(slides[cur]); loadDemos(slides[cur + 1]);
+    document.getElementById('pos').textContent = (cur + 1) + ' / ' + slides.length;
+    document.getElementById('bar').style.width = ((cur + 1) / slides.length * 100) + '%';
+    if (push !== false) history.replaceState(null, '', '#slide=' + (cur + 1));
+    else if (narrow.matches && cur > 0) slides[cur].scrollIntoView();
+  }
+  document.getElementById('prev').onclick = function () { show(cur - 1); };
+  document.getElementById('next').onclick = function () { show(cur + 1); };
+  var photo = document.getElementById('coverPhoto');
+  if (photo && PHOTO) photo.src = PHOTO;
+
+  /* Снимок на весь экран: галерея и картинки с классом zoom. */
+  var lb = document.getElementById('lb');
+  function openLb(src, title) {
+    document.getElementById('lbImg').src = src;
+    document.getElementById('lbTitle').textContent = title || '';
+    lb.classList.add('on');
+  }
+  document.querySelectorAll('.gal').forEach(function (gal) {
+    var gb = [].slice.call(gal.querySelectorAll('.glist button[data-t]'));
+    var pic = gal.querySelector('.gpic');
+    gb.forEach(function (b, k) {
+      b.onclick = function () {
+        gb.forEach(function (x) { x.classList.toggle('on', x === b); });
+        pic.src = b.getAttribute('data-src'); pic.alt = b.getAttribute('data-t');
+        gal.querySelector('.gn').textContent = ('0' + (k + 1)).slice(-2) + ' / ' + ('0' + gb.length).slice(-2);
+        gal.querySelector('.gt').textContent = b.getAttribute('data-t');
+        gal.querySelector('.gd').textContent = b.getAttribute('data-d');
+      };
+    });
+    gal.querySelector('.gmain').onclick = function () { openLb(pic.src, pic.alt); };
+  });
+  document.querySelectorAll('img.zoom, .sheets img').forEach(function (im) {
+    im.onclick = function () { openLb(im.currentSrc || im.src, im.alt); };
+  });
+  function closeLb() { lb.classList.remove('on'); }
+  document.getElementById('lbX').onclick = closeLb;
+  lb.addEventListener('click', function (e) { if (e.target === lb || e.target.className === 'body') closeLb(); });
+
+  /* Демо на весь экран: кнопка на слайде или в галерее. */
+  var dfs = document.getElementById('dfs');
+  document.querySelectorAll('.fs-btn, .glive').forEach(function (b) {
+    b.onclick = function (e) {
+      e.stopPropagation();
+      document.getElementById('dfsTitle').textContent = b.getAttribute('data-title') || '';
+      var dl = document.getElementById('dfsLoader'); dl.classList.remove('done');
+      var df = document.getElementById('dfsFrame');
+      df.onload = function () { if (loaded(df)) dl.classList.add('done'); };
+      df.src = b.getAttribute('data-src');
+      dfs.classList.add('on');
+    };
+  });
+  function closeDfs() { dfs.classList.remove('on'); document.getElementById('dfsFrame').removeAttribute('src'); }
+  document.getElementById('dfsX').onclick = closeDfs;
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { if (dfs.classList.contains('on')) return closeDfs(); if (lb.classList.contains('on')) return closeLb(); }
+    if (lb.classList.contains('on') || dfs.classList.contains('on')) return;
+    if (/^(INPUT|TEXTAREA)$/.test((e.target && e.target.tagName) || '')) return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); show(cur + 1); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); show(cur - 1); }
+    if (e.key === 'Home') { e.preventDefault(); show(0); }
+    if (e.key === 'End') { e.preventDefault(); show(slides.length - 1); }
+  });
+  function fromHash() { var m = location.hash.match(/slide=(\d+)/); return m ? parseInt(m[1], 10) - 1 : 0; }
+  window.addEventListener('hashchange', function () { show(fromHash(), false); });
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  show(fromHash(), false);
+</script>
+<script src="/components/private-repo.js" defer></script>
+</body>
+</html>
