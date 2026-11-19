@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Релизы: факт отгрузки, а не статус в Jira</title>
+<meta name="description" content="Каждая выкладка в прод становится короткой заметкой: как было, как стало, где проверить и на каких данных это основано. Гарантия, что доработка отгружена, задачу можно закрывать, а работа команды подтверждена.">
+<link rel="canonical" href="https://slides.aleksishmanov.ru/release-journal/">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Каталог презентаций · Алексей Ишманов">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://slides.aleksishmanov.ru/release-journal/">
+<meta property="og:title" content="Релизы: факт отгрузки, а не статус в Jira">
+<meta property="og:description" content="Каждая выкладка в прод становится короткой заметкой: как было, как стало, где проверить и на каких данных это основано. Гарантия, что доработка отгружена, задачу можно закрывать, а работа команды подтверждена.">
+<meta property="og:image" content="https://slides.aleksishmanov.ru/release-journal/cover.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="720">
+<meta property="og:image:alt" content="Первый слайд презентации «Релизы: факт отгрузки»">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Релизы: факт отгрузки, а не статус в Jira">
+<meta name="twitter:description" content="Каждая выкладка в прод становится короткой заметкой: как было, как стало, где проверить и на каких данных это основано. Гарантия, что доработка отгружена, задачу можно закрывать, а работа команды подтверждена.">
+<meta name="twitter:image" content="https://slides.aleksishmanov.ru/release-journal/cover.png">
+<meta name="twitter:image:alt" content="Первый слайд презентации «Релизы: факт отгрузки»">
+<style>
+  /* Айдентика каталога (как agent-self-reflection): бежевый фон, чёрный и синий, моноширинные подписи,
+     карточки с жёсткой тенью. Колода написана руками, без генератора: стили только здесь. */
+  :root { --bg:#efeee8; --ink:#080808; --blue:#2437ed; --muted:#51514b; --line:#c9c8c2; --red:#d8302a; --amber:#d29b1f; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: #d9d8d3; }
+  body { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; color: var(--ink); overflow: hidden; }
+  #stage { position: fixed; left: 0; top: 0; width: 1280px; height: 720px; flex: none; transform-origin: 0 0; }
+  .slide { position: absolute; inset: 0; padding: 76px 72px 60px; display: none; flex-direction: column; justify-content: flex-start; background: var(--bg); overflow: hidden; }
+  .slide.on { display: flex; }
+  .slide.center { justify-content: center; padding-top: 64px; }
+  .accent { color: var(--blue); }
+  h1 { font-size: 66px; line-height: 1.03; letter-spacing: -.045em; font-weight: 800; }
+  h2 { font-size: 48px; line-height: 1.06; letter-spacing: -.04em; font-weight: 800; margin-bottom: 28px; }
+  .label { font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; font-size: 15px; font-weight: 700; letter-spacing: .08em; color: var(--blue); margin-bottom: 20px; text-transform: uppercase; }
+  .lead { font-size: 24px; line-height: 1.4; margin-top: 26px; max-width: 780px; }
+  .quote { border-left: 5px solid var(--blue); padding: 4px 0 4px 22px; font-size: 26px; line-height: 1.34; font-weight: 700; margin-top: 30px; }
+  .line { font-size: 21px; line-height: 1.4; color: var(--muted); }
+  .note { font-size: 15px; color: var(--muted); margin-top: 18px; line-height: 1.45; }
+  .slide > .note { padding-right: 150px; }  /* справа внизу — навигация */
+  /* титул */
+  .cover { display: grid; grid-template-columns: minmax(0,1fr) 300px; gap: 56px; align-items: center; }
+  .photo { width: 300px; height: 300px; object-fit: cover; border: 1px solid var(--ink); box-shadow: 8px 8px 0 var(--blue); display: block; }
+  .site { display: flex; justify-content: space-between; margin-top: 22px; border: 1px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); text-decoration: none; color: var(--ink); }
+  .site span { font-family: "JetBrains Mono", monospace; font-size: 17px; font-weight: 700; padding: 13px 16px; }
+  .site i { display: flex; align-items: center; justify-content: center; width: 46px; background: var(--blue); color: #fff; font-style: normal; }
+  .kicker { font-family: "JetBrains Mono", monospace; font-size: 16px; font-weight: 700; letter-spacing: .06em; color: var(--muted); margin-bottom: 22px; }
+  /* реплики */
+  .talk { display: flex; flex-direction: column; gap: 18px; margin-top: 4px; max-width: 920px; }
+  .said { display: inline-block; align-self: flex-start; background: var(--ink); color: #fff; font-size: 24px; line-height: 1.35; padding: 12px 18px; border-radius: 14px 14px 14px 2px; max-width: 820px; }
+  .said.r { align-self: flex-end; background: #fff; color: var(--ink); border: 1px solid var(--ink); border-radius: 14px 14px 2px 14px; }
+  .said.bad { border-color: var(--red); box-shadow: 4px 4px 0 var(--red); }
+  .said.good { border-color: var(--blue); box-shadow: 4px 4px 0 var(--blue); }
+  .said small { display: block; font-family: "JetBrains Mono", monospace; font-size: 12px; letter-spacing: .06em; opacity: .7; margin-bottom: 4px; }
+  /* карточки и шаги */
+  .cards { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 24px; }
+  .cards.four { grid-template-columns: repeat(4, minmax(0,1fr)); gap: 18px; margin-top: 8px; }
+  .card { border: 1px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); padding: 22px 24px 24px; background: var(--bg); }
+  .card.blue { border-color: var(--blue); box-shadow: 6px 6px 0 var(--blue); }
+  .card h3 { font-size: 24px; line-height: 1.15; letter-spacing: -.025em; margin-bottom: 10px; }
+  .card p { font-size: 18px; line-height: 1.4; color: var(--muted); }
+  .cards.four .card { padding: 18px 18px 20px; }
+  .cards.four .card h3 { font-size: 21px; } .cards.four .card p { font-size: 16px; }
+  .cards.roomy .card { padding: 24px 28px 26px; } .cards.roomy .card h3 { font-size: 27px; margin-bottom: 12px; } .cards.roomy .card p { font-size: 19px; }
+  .steps { display: grid; grid-template-columns: 1fr 36px 1fr 36px 1fr 36px 1fr; align-items: stretch; }
+  .steps > .arr { display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 800; color: var(--blue); }
+  .steps .card { padding: 20px 18px; }
+  .steps .card h3 { font-size: 22px; } .steps .card p { font-size: 16px; }
+  .tag { display: inline-block; font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 700; letter-spacing: .08em; background: var(--ink); color: var(--bg); padding: 5px 10px; margin-bottom: 14px; }
+  .card.blue .tag { background: var(--blue); }
+  .three { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 22px; }
+  .three .card { padding: 22px 22px 24px; }
+  .three .card h3 { font-size: 23px; } .three .card p { font-size: 17px; }
+  /* список с картинкой */
+  .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 44px; flex: 1; min-height: 0; align-items: start; }
+  .split.wide { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); }
+  ul.lim { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+  ul.lim li { font-size: 20px; line-height: 1.38; display: grid; grid-template-columns: 34px 1fr; }
+  ul.lim li::before { content: "→"; color: var(--blue); font-weight: 800; }
+  ol.rit { list-style: none; counter-reset: r; display: flex; flex-direction: column; gap: 12px; }
+  ol.rit li { counter-increment: r; display: grid; grid-template-columns: 46px 1fr; align-items: baseline; font-size: 21px; line-height: 1.35; }
+  ol.rit li::before { content: counter(r); font-family: "JetBrains Mono", monospace; font-weight: 800; font-size: 18px; color: var(--muted); }
+  ol.rit li.hi { font-weight: 800; }
+  ol.rit li.hi::before { color: var(--blue); }
+  ol.rit li span { display: block; font-weight: 400; font-size: 16px; color: var(--muted); }
+  /* снимки экранов */
+  .shot { display: block; max-width: 100%; height: auto; border: 1px solid var(--ink); box-shadow: 6px 6px 0 var(--blue); background: #fff; }
+  .shot.ink { box-shadow: 6px 6px 0 var(--ink); }
+  .duo { display: grid; grid-template-columns: 220px minmax(0,1fr); gap: 40px; align-items: start; flex: none; }
+  .duo .phone { width: 220px; height: 400px; object-fit: cover; object-position: top; border-radius: 22px; }
+  .duo .desk { max-height: 400px; width: auto; }
+  .cap { font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-top: 12px; }
+  .doc { max-height: 470px; width: auto; }
+  /* схема */
+  .flow { display: grid; grid-template-columns: minmax(0,1fr) 40px minmax(0,1.2fr) 40px minmax(0,1fr); align-items: stretch; flex: none; margin-top: 4px; }
+  .flow > .arr { display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 800; color: var(--blue); }
+  .zone { border: 2px dashed var(--blue); padding: 16px 18px 6px; background: rgba(36,55,237,.05); display: flex; flex-direction: column; }
+  .zone.out { border-color: var(--ink); background: transparent; }
+  .zone .zl { font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--blue); margin-bottom: 12px; }
+  .zone.out .zl { color: var(--muted); }
+  .node { border: 1px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); background: #fff; padding: 11px 14px 12px; margin-bottom: 14px; font-size: 16px; line-height: 1.35; color: var(--muted); }
+  .node b { display: block; font-size: 19px; line-height: 1.2; color: var(--ink); margin-bottom: 3px; letter-spacing: -.02em; }
+  .node.blue { border-color: var(--blue); box-shadow: 4px 4px 0 var(--blue); }
+  /* сравнение исполнителей */
+  .cmp { display: grid; grid-template-columns: 190px minmax(0,1fr) minmax(0,1fr); border: 1px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); background: #fff; }
+  .cmp > div { padding: 15px 18px; border-bottom: 1px solid var(--line); font-size: 19px; line-height: 1.35; }
+  .cmp > div:nth-last-child(-n+2) { border-bottom: none; }
+  .cmp .span2 { grid-column: span 2; }
+  .cmp .h { background: var(--ink); color: #fff; font-weight: 800; font-size: 20px; border-bottom: none; }
+  .cmp .h.b { background: var(--blue); }
+  .cmp .k { font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; }
+  .cmp .h.k { color: #fff; }
+  /* цифры */
+  .fact { display: grid; grid-template-columns: minmax(0,1fr) 430px; gap: 56px; align-items: center; flex: 1; }
+  .big { font-size: 190px; line-height: .9; letter-spacing: -.06em; font-weight: 800; color: var(--blue); }
+  .big small { font-size: 56px; letter-spacing: -.03em; margin-left: 10px; }
+  .big + .line { font-size: 26px; color: var(--ink); margin-top: 26px; line-height: 1.35; }
+  .kpis { display: flex; flex-direction: column; gap: 18px; }
+  .kpi { border: 1px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); background: #fff; padding: 14px 20px; }
+  .kpi.red { border-color: var(--red); box-shadow: 6px 6px 0 var(--red); }
+  .kpi b { display: block; font-size: 42px; line-height: 1; letter-spacing: -.04em; }
+  .kpi.red b { color: var(--red); }
+  .kpi span { display: block; font-size: 16px; color: var(--muted); margin-top: 6px; line-height: 1.3; }
+  /* финал */
+  .final { display: grid; grid-template-columns: minmax(0,1fr) 560px; gap: 50px; align-items: center; height: 100%; }
+  .final h1 { font-size: 58px; }
+  .term { background: var(--ink); color: #e9e8e2; font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; font-size: 16px; line-height: 1.9; padding: 24px 28px; box-shadow: 8px 8px 0 var(--blue); white-space: pre-wrap; }
+  .term i { font-style: normal; color: #9fb0ff; }
+  .repo { display: inline-block; margin-top: 28px; font-size: 21px; font-weight: 700; color: var(--blue); text-decoration: none; border-bottom: 3px solid var(--blue); padding-bottom: 4px; }
+  /* навигация */
+  #nav { position: fixed; right: 18px; bottom: 16px; z-index: 40; display: flex; align-items: center; gap: 8px; background: rgba(239,238,232,.95); border: 1px solid var(--ink); padding: 5px 9px; }
+  #nav button { font: inherit; font-size: 16px; width: 26px; height: 24px; cursor: pointer; background: none; border: none; }
+  #nav .p { font-family: "JetBrains Mono", monospace; font-size: 12px; min-width: 46px; text-align: center; }
+  #bar { position: fixed; left: 0; top: 0; height: 3px; background: var(--blue); z-index: 41; transition: width .18s; }
+  /* эта колода: длинный снимок в колонке, полоса источников, пять шагов статуса */
+  .split .doc { max-height: 470px; width: auto; max-width: 100%; object-fit: cover; object-position: top; }
+  .wideshot { width: 100%; max-width: 1060px; margin-bottom: 26px; }
+  .steps.st5 { grid-template-columns: 1fr 36px 1fr 36px 1fr 36px 1fr; }
+  .duo .desk { height: 400px; max-height: 400px; width: auto; max-width: 100%; object-fit: cover; object-position: top; }
+  /* Телефон: слайды лентой без масштаба. */
+  @media (max-width: 700px), (orientation: portrait) and (max-width: 900px) {
+    html, body { height: auto; overflow: auto; display: block; background: var(--bg); }
+    #stage { position: static; width: auto; height: auto; transform: none !important; }
+    .slide { position: relative; inset: auto; display: flex !important; padding: 40px 18px 44px; border-bottom: 1px solid var(--line); }
+    .slide.center { padding-top: 40px; }
+    #nav, #bar { display: none; }
+    .slide > .note { padding-right: 0; }
+    h1, .final h1 { font-size: 36px; } h2 { font-size: 30px; margin-bottom: 22px; }
+    .lead { font-size: 18px; } .quote { font-size: 20px; } .line { font-size: 17px; }
+    .cover, .fact, .final, .split, .split.wide { grid-template-columns: 1fr; gap: 26px; height: auto; }
+    .photo { width: 150px; height: 150px; } .site { max-width: 260px; }
+    .said { font-size: 18px; }
+    .cards, .cards.four, .three { grid-template-columns: 1fr; gap: 16px; }
+    .steps { grid-template-columns: 1fr; } .steps > .arr { height: 30px; transform: rotate(90deg); }
+    ul.lim li, ol.rit li { font-size: 17px; }
+    .duo { grid-template-columns: 1fr; gap: 24px; }
+    .duo .phone { width: 100%; max-width: 300px; height: auto; }
+    .duo .desk, .doc { max-height: none; width: 100%; }
+    .flow { grid-template-columns: 1fr; } .flow > .arr { height: 30px; transform: rotate(90deg); }
+    .cmp { grid-template-columns: 1fr; } .cmp > div { border-bottom: 1px solid var(--line); } .cmp > div:nth-last-child(-n+2) { border-bottom: 1px solid var(--line); } .cmp .span2 { grid-column: auto; }
+    .cmp .k { background: #f3f2ec; padding-top: 8px; padding-bottom: 8px; } .cmp .h.k { display: none; }
+    .big { font-size: 104px; } .big small { font-size: 32px; } .big + .line { font-size: 19px; }
+    .kpi b { font-size: 34px; }
+    .term { font-size: 14px; padding: 18px; }
+    .repo { font-size: 17px; word-break: break-all; }
+    .split .doc { max-height: 520px; width: 100%; height: auto; }
+    .steps.st5 { grid-template-columns: 1fr; }
+    .wideshot { margin-bottom: 18px; }
+    .duo .desk { height: auto; max-height: 520px; width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div id="stage">
+  <section class="slide center on" data-title="Титул">
+    <div class="cover"><div>
+      <p class="kicker">ОТЧЁТЫ PO · ЖУРНАЛ ВЫКЛАДОК В ПРОД</p>
+      <h1>Релизы: <span class="accent">факт отгрузки</span>,<br>а не статус в Jira</h1>
+      <p class="lead">Каждая выкладка в прод становится короткой заметкой: что было, что стало, где проверить и на каких данных это основано.</p>
+      <p class="quote">Задачу закрываю, когда вижу её в проде,<br>а не когда мне сказали «готово».</p>
+    </div><div><img class="photo" id="coverPhoto" alt="Автор"><a class="site" href="https://aleksishmanov.ru/" target="_blank" rel="noopener"><span>aleksishmanov.ru</span><i>↗</i></a></div></div>
+  </section>
+
+  <section class="slide" data-title="Проблема">
+    <p class="label">Проблема</p>
+    <h2>«Готово» <span class="accent">ещё не значит «в проде»</span></h2>
+    <div class="talk">
+      <span class="said"><small>РУКОВОДИТЕЛЬ · В ЧАТЕ</small>Повторную покупку выкатили? Можно закрывать эпик?</span>
+      <span class="said r bad"><small>КОМАНДА</small>Да, смержили в среду. Задача в «Готово».</span>
+      <span class="said"><small>РУКОВОДИТЕЛЬ · ЧЕРЕЗ ДВА ДНЯ</small>В проде кнопки нет. Сборка неделю ждёт, пока кто-то нажмёт выкладку.</span>
+    </div>
+    <p class="note">Статус задачи говорит, что работа сделана. Прод говорит, что она отгружена. Между ними — ручная кнопка, ночное окно и забытый пайплайн.</p>
+  </section>
+
+  <section class="slide" data-title="Почему так">
+    <p class="label">Почему статус обманывает</p>
+    <h2>Трекер знает про код, <span class="accent">а не про прод</span></h2>
+    <div class="cards">
+      <div class="card"><h3>«Готово» — это мердж</h3><p>Задача закрывается, когда код влит. Выкладка — отдельный шаг, и в трекере его не видно.</p></div>
+      <div class="card"><h3>Выкладка — ручная кнопка</h3><p>Сборка прошла тест и ждёт запуска на прод. Иногда днями, иногда до следующего релиза.</p></div>
+      <div class="card"><h3>Трекер отстаёт от прода</h3><p>Бывает и наоборот: шаг уже в проде, а задача в бэклоге. Строить отчёт на статусе нельзя.</p></div>
+      <div class="card blue"><h3>Никто не пишет, что поменялось</h3><p>Поддержка и маркетинг узнают о новой кнопке от пользователей, а не от команды.</p></div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Ценность">
+    <p class="label">Что даёт журнал релизов</p>
+    <h2>Три гарантии <span class="accent">вместо «вроде выкатили»</span></h2>
+    <div class="three">
+      <div class="card blue"><span class="tag">ФАКТ</span><h3>Доработка отгружена</h3><p>Сигнал берётся из системы выкладки: какой сервис, когда, какой коммит, был ли откат. Не со слов и не из статуса.</p></div>
+      <div class="card blue"><span class="tag">ЗАКРЫТИЕ</span><h3>Задачу можно закрывать</h3><p>Задачи и эпик находятся по коммитам выкладки. Закрываю их по факту на проде, а не по ощущению.</p></div>
+      <div class="card blue"><span class="tag">КОМАНДА</span><h3>Работа команды подтверждена</h3><p>Лента отгруженного — то, что видят бизнес, поддержка и маркетинг. Сделанное не теряется в трекере.</p></div>
+    </div>
+    <p class="note">Одна заметка — один релиз и одно сообщение в чат журнала релизов.</p>
+  </section>
+
+  <section class="slide" data-title="Как работает">
+    <p class="label">Как это устроено</p>
+    <h2>Данные собирает скрипт, <span class="accent">текст пишет агент</span></h2>
+    <div class="flow">
+      <div class="zone out"><p class="zl">1 · Сбор — детерминированно</p>
+        <div class="node"><b>Выкладка в GitLab</b>прод-окружение: успех, ожидание кнопки или откат</div>
+        <div class="node"><b>Задачи и эпик в Jira</b>по ключам из коммитов между выкладками</div>
+        <div class="node"><b>Документы в Confluence</b>только по прямым ссылкам задачи и эпика</div>
+      </div>
+      <div class="arr">→</div>
+      <div class="zone"><p class="zl">2 · Текст — ИИ-агент</p>
+        <div class="node blue"><b>Задача на доске агентов</b>пакет данных приложен к задаче, агент работает в своей памяти</div>
+        <div class="node blue"><b>Только формулировки</b>заголовок, как было, как стало, где проверить, 1–3 абзаца</div>
+      </div>
+      <div class="arr">→</div>
+      <div class="zone out"><p class="zl">3 · Приёмка — правилами</p>
+        <div class="node"><b>Проверка текста</b>длины, служебные слова, ключи и даты только из пакета</div>
+        <div class="node"><b>Лента релизов</b>прошло — публикуется; нет — задача возвращается агенту с причинами</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Заметка">
+    <p class="label">Заметка</p>
+    <h2>Сначала — <span class="accent">как было, как стало, где проверить</span></h2>
+    <div class="split wide">
+      <ul class="lim">
+        <li>Три строки сверху отвечают на главный вопрос: что поменялось для пользователя.</li>
+        <li>«Где проверить» начинается с действия — открыть и убедиться самому за минуту.</li>
+        <li>Ниже 1–3 абзаца связного текста и скриншоты, без служебного языка.</li>
+        <li>Текст копируется в чат как есть: одна заметка — одно сообщение.</li>
+      </ul>
+      <div><img class="shot doc" src="img/note.webp" loading="lazy" width="1200" height="782" alt="Заметка о релизе: как было, как стало, где проверить"><p class="cap">Демо-данные: выдуманный релиз</p></div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Источники">
+    <p class="label">На чём основан статус</p>
+    <h2>Внизу каждой заметки — <span class="accent">источники</span></h2>
+    <img class="shot wideshot" src="img/sources.webp" loading="lazy" width="1360" height="250" alt="Источники: GitLab, Jira, Confluence">
+    <div class="steps st5">
+      <div class="card"><h3>Запланирован</h3><p>сборка есть, на стенды не ушла</p></div><div class="arr">→</div>
+      <div class="card"><h3>На предпроде</h3><p>тест пройден, прод ждёт кнопки</p></div><div class="arr">→</div>
+      <div class="card blue"><h3>В проде</h3><p>выкладка прошла, отката нет</p></div><div class="arr">→</div>
+      <div class="card blue"><h3>Проверен</h3><p>сценарий подтверждён на проде</p></div>
+    </div>
+    <p class="note">Статус выводится из данных выкладки. Повтор прежнего коммита на проде — это откат, и заметка помечается красным.</p>
+  </section>
+
+  <section class="slide" data-title="Лента">
+    <p class="label">Лента релизов</p>
+    <h2>Всё отгруженное — <span class="accent">одной лентой по контурам</span></h2>
+    <div class="duo">
+      <img class="shot phone" src="img/phone.webp" loading="lazy" width="780" height="1688" alt="Заметка на телефоне">
+      <div>
+        <img class="shot desk ink" src="img/feed.webp" loading="lazy" width="1400" height="1750" alt="Лента релизов с чипами контуров">
+        <p class="cap">Сверху контуры влияния · «Скоро в проде» и «Выложено» · демо-данные</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Детерминированно">
+    <p class="label">Почему этому можно верить</p>
+    <h2>Модель меняет слова, <span class="accent">но не факты</span></h2>
+    <div class="cmp">
+      <div class="h k">Что</div><div class="h">Откуда берётся</div><div class="h b">Кто отвечает</div>
+      <div class="k">Дата и статус</div><div>выкладка в GitLab: время, успех, ожидание, откат</div><div>скрипт сбора</div>
+      <div class="k">Контур</div><div>таблица «сервис → контур влияния»</div><div>скрипт сбора</div>
+      <div class="k">Источники</div><div>задачи и эпик Jira, страницы Confluence со ссылками</div><div>скрипт сбора</div>
+      <div class="k">Текст</div><div>заголовок, как было, как стало, где проверить, абзацы</div><div>ИИ-агент</div>
+      <div class="k">Проверка</div><div>длины, служебные слова, ключи и даты только из пакета</div><div>правила приёмки</div>
+    </div>
+    <p class="note">Одинаковые данные дают одинаковые поля заметки. Ошибся агент — правило вернёт текст ему же, в ту же задачу.</p>
+  </section>
+
+  <section class="slide" data-title="Где живёт">
+    <p class="label">Где это живёт</p>
+    <h2>Отдельный модуль — <span class="accent">виджет и вкладка отчётов</span></h2>
+    <div class="three">
+      <div class="card"><span class="tag">ELEMENT</span><h3>Виджет в мессенджере</h3><p>«Релизы» добавляются в любую комнату через менеджер расширений. Ссылка на заметку открывает её сразу.</p></div>
+      <div class="card"><span class="tag">ОТЧЁТЫ</span><h3>Вкладка в отчётах спринта</h3><p>Рядом с блокерами, спринтом и бизнес-отчётом. Вход один, тот же, что у отчётов.</p></div>
+      <div class="card blue"><span class="tag">МОДУЛЬ</span><h3>Свой репозиторий</h3><p>Сбор, агент, приёмка и экран развиваются отдельно и выкладываются без риска для остальных отчётов.</p></div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Что дальше">
+    <p class="label">Что дальше</p>
+    <h2>Три шага <span class="accent">до журнала без ручной работы</span></h2>
+    <ol class="rit">
+      <li class="hi">Сбор и приёмка без агента<span>выкладки, задачи, документы, проверка и публикация; проверено на пяти последних релизах</span></li>
+      <li class="hi">Агент «Летописец релизов»<span>получает задачу на доске с пакетом данных и сдаёт только текст</span></li>
+      <li>Наружу<span>подтверждение руководителя, сообщение в чат журнала релизов, пост в ленте событий</span></li>
+    </ol>
+    <p class="note">Граница честная: релиз виден, пока его выкладка видна в системе выкладки. Что выкатывают вручную мимо неё, журнал пока не увидит.</p>
+  </section>
+
+  <section class="slide center" data-title="Итог">
+    <div class="final"><div>
+      <p class="label">Итог</p>
+      <h1>Закрываем задачи <span class="accent">по факту отгрузки</span></h1>
+      <p class="lead">Журнал релизов отвечает на три вопроса без созвона: что выкатили, когда и как в этом убедиться.</p>
+      <a class="repo" href="https://github.com/po-helper-org/poh-widget-releases" data-private-repo>github.com/po-helper-org/poh-widget-releases 🔒</a>
+    </div>
+    <div class="term"><i>выкладка</i>  shop-web → прод 11:38, без отката
+<i>задачи</i>    SHOP-412 · эпик SHOP-400
+<i>документ</i>  «Повторная покупка: требования»
+<i>заметка</i>   «Купить ещё» в истории заказов
+<i>статус</i>    в проде, проверен ✓
+<i>итог</i>      задачу можно закрывать</div></div>
+  </section>
+</div>
+<div id="nav">
+  <button id="prev" title="Назад">‹</button><span class="p" id="pos"></span><button id="next" title="Вперёд">›</button>
+</div>
+<script>
+  var PHOTO = "/okr-quarter-planning/img/photo.webp";
+  var slides = [].slice.call(document.querySelectorAll('.slide'));
+  var cur = 0;
+  var narrow = window.matchMedia('(max-width: 700px), (orientation: portrait) and (max-width: 900px)');
+  function fit() {
+    var st = document.getElementById('stage');
+    if (narrow.matches) { st.style.transform = 'none'; st.style.left = st.style.top = ''; return; }
+    var w = document.documentElement.clientWidth, h = document.documentElement.clientHeight;
+    var s = Math.min(w / 1280, h / 720);
+    st.style.left = Math.round((w - 1280 * s) / 2) + 'px';
+    st.style.top = Math.round((h - 720 * s) / 2) + 'px';
+    st.style.transform = 'scale(' + s + ')';
+  }
+  window.addEventListener('resize', fit); fit();
+  function show(i, push) {
+    cur = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach(function (s, k) { s.classList.toggle('on', k === cur); });
+    document.getElementById('pos').textContent = (cur + 1) + ' / ' + slides.length;
+    document.getElementById('bar').style.width = ((cur + 1) / slides.length * 100) + '%';
+    if (push !== false) history.replaceState(null, '', '#slide=' + (cur + 1));
+    else if (narrow.matches && cur > 0) slides[cur].scrollIntoView();
+  }
+  window.addEventListener('load', function () { if (narrow.matches && cur > 0) slides[cur].scrollIntoView(); });
+  document.getElementById('prev').onclick = function () { show(cur - 1); };
+  document.getElementById('next').onclick = function () { show(cur + 1); };
+  var photo = document.getElementById('coverPhoto');
+  if (photo && PHOTO) photo.src = PHOTO;
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); show(cur + 1); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); show(cur - 1); }
+    if (e.key === 'Home') { e.preventDefault(); show(0); }
+    if (e.key === 'End') { e.preventDefault(); show(slides.length - 1); }
+  });
+  function fromHash() { var m = location.hash.match(/slide=(\d+)/); return m ? parseInt(m[1], 10) - 1 : 0; }
+  window.addEventListener('hashchange', function () { show(fromHash(), false); });
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  show(fromHash(), false);
+</script>
+<script src="/components/private-repo.js" defer></script>
+</body>
+</html>
