@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Один вход для людей, агентов и ИИ: безопасность контура через Authentik</title>
+<meta name="description" content="Как в домашний контур PO встроен Authentik: один вход на все приложения, доступ группами, второй фактор, сервисные аккаунты агентов и инструменты ИИ-коннектора по учётке. Какие вопросы безопасности это закрывает, что осталось на человеке и на каких граблях мы учились.">
+<link rel="canonical" href="https://slides.aleksishmanov.ru/authentik-security/">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Каталог презентаций · Алексей Ишманов">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://slides.aleksishmanov.ru/authentik-security/">
+<meta property="og:title" content="Один вход для людей, агентов и ИИ: безопасность контура через Authentik">
+<meta property="og:description" content="Как в домашний контур PO встроен Authentik: один вход на все приложения, доступ группами, второй фактор, сервисные аккаунты агентов и инструменты ИИ-коннектора по учётке. Какие вопросы безопасности это закрывает, что осталось на человеке и на каких граблях мы учились.">
+<meta property="og:image" content="https://slides.aleksishmanov.ru/authentik-security/cover.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="720">
+<meta property="og:image:alt" content="Первый слайд презентации «Один вход для людей, агентов и ИИ: безопасность контура через Authentik»">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Один вход для людей, агентов и ИИ: безопасность контура через Authentik">
+<meta name="twitter:description" content="Как в домашний контур PO встроен Authentik: один вход на все приложения, доступ группами, второй фактор, сервисные аккаунты агентов и инструменты ИИ-коннектора по учётке. Какие вопросы безопасности это закрывает, что осталось на человеке и на каких граблях мы учились.">
+<meta name="twitter:image" content="https://slides.aleksishmanov.ru/authentik-security/cover.png">
+<meta name="twitter:image:alt" content="Первый слайд презентации «Один вход для людей, агентов и ИИ: безопасность контура через Authentik»">
+<style>
+  /* Айдентика каталога (как hermes-bridge-hq): бежевый фон, чёрный и синий, моноширинные подписи,
+     карточки с жёсткой тенью. Колода написана руками, без генератора: стили только здесь. */
+  :root { --bg:#efeee8; --ink:#080808; --blue:#2437ed; --muted:#51514b; --line:#c9c8c2; --red:#d8302a; --green:#1f7a3a; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: #d9d8d3; }
+  body { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; color: var(--ink); overflow: hidden; }
+  .mono { font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; }
+  #stage { position: fixed; left: 0; top: 0; width: 1280px; height: 720px; flex: none; transform-origin: 0 0; }
+  .slide { position: absolute; inset: 0; padding: 70px 72px 56px; display: none; flex-direction: column; justify-content: flex-start; background: var(--bg); overflow: hidden; }
+  .slide.on { display: flex; }
+  .slide.center { justify-content: center; padding-top: 64px; }
+  .accent { color: var(--blue); }
+  h1 { font-size: 62px; line-height: 1.04; letter-spacing: -.045em; font-weight: 800; }
+  h2 { font-size: 46px; line-height: 1.06; letter-spacing: -.04em; font-weight: 800; margin-bottom: 28px; }
+  .label { font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; font-size: 15px; font-weight: 700; letter-spacing: .08em; color: var(--blue); margin-bottom: 20px; text-transform: uppercase; }
+  .lead { font-size: 23px; line-height: 1.4; margin-top: 24px; max-width: 780px; }
+  .quote { border-left: 5px solid var(--blue); padding: 4px 0 4px 22px; font-size: 25px; line-height: 1.34; font-weight: 700; margin-top: 28px; }
+  .note { font-size: 14px; color: var(--muted); margin-top: 18px; line-height: 1.45; }
+  .slide > .note { padding-right: 150px; }  /* справа внизу — навигация */
+  .kicker { font-family: "JetBrains Mono", monospace; font-size: 16px; font-weight: 700; letter-spacing: .06em; color: var(--muted); margin-bottom: 22px; }
+  /* титул */
+  .cover { display: grid; grid-template-columns: minmax(0,1fr) 300px; gap: 56px; align-items: center; }
+  .photo { width: 300px; height: 300px; object-fit: cover; border: 1px solid var(--ink); box-shadow: 8px 8px 0 var(--blue); display: block; }
+  .site { display: flex; justify-content: space-between; margin-top: 22px; border: 1px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); text-decoration: none; color: var(--ink); }
+  .site span { font-family: "JetBrains Mono", monospace; font-size: 17px; font-weight: 700; padding: 13px 16px; }
+  .site i { display: flex; align-items: center; justify-content: center; width: 46px; background: var(--blue); color: #fff; font-style: normal; }
+  /* карточки */
+  .cards { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 22px; }
+  .card { border: 1px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); padding: 20px 22px 22px; background: var(--bg); }
+  .card.blue { border-color: var(--blue); box-shadow: 6px 6px 0 var(--blue); }
+  .card.red { border-color: var(--red); box-shadow: 6px 6px 0 var(--red); }
+  .card h3 { font-size: 23px; line-height: 1.15; letter-spacing: -.025em; margin-bottom: 9px; }
+  .card p { font-size: 17px; line-height: 1.4; color: var(--muted); }
+  .tag { display: inline-block; font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 700; letter-spacing: .08em; background: var(--ink); color: var(--bg); padding: 5px 10px; margin-bottom: 12px; }
+  .card.blue .tag { background: var(--blue); }
+  .card.red .tag { background: var(--red); }
+  .three { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 22px; }
+  .three .card h3 { font-size: 21px; } .three .card p { font-size: 16px; }
+  /* схема пути запроса */
+  .flow { display: grid; grid-template-columns: minmax(0,1fr) 34px minmax(0,1fr) 34px minmax(0,1fr) 34px minmax(0,1fr); align-items: stretch; }
+  .flow > .arr { display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 800; color: var(--blue); }
+  .node { border: 1px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); background: #fff; padding: 14px 15px 15px; font-size: 15px; line-height: 1.38; color: var(--muted); }
+  .node b { display: block; font-size: 19px; line-height: 1.2; color: var(--ink); margin-bottom: 6px; letter-spacing: -.02em; }
+  .node.blue { border-color: var(--blue); box-shadow: 4px 4px 0 var(--blue); }
+  .codes { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 18px; margin-top: 30px; }
+  .code { border: 1px solid var(--ink); background: #fff; padding: 14px 16px; display: grid; grid-template-columns: 74px 1fr; gap: 12px; align-items: center; font-size: 16px; line-height: 1.35; color: var(--muted); }
+  .code b { font-family: "JetBrains Mono", monospace; font-size: 30px; color: var(--ink); }
+  .code.ok b { color: var(--green); } .code.no b { color: var(--red); } .code.in b { color: var(--blue); }
+  /* таблица сравнения и угроз */
+  .cmp { display: grid; grid-template-columns: 190px minmax(0,1fr) minmax(0,1.25fr); border: 1px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); background: #fff; }
+  .cmp > div { padding: 12px 16px; border-bottom: 1px solid var(--line); font-size: 17px; line-height: 1.35; }
+  .cmp > div:nth-last-child(-n+3) { border-bottom: none; }
+  .cmp .h { background: var(--ink); color: #fff; font-weight: 800; font-size: 18px; border-bottom: none; }
+  .cmp .h.b { background: var(--blue); }
+  .cmp .k { font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; }
+  .cmp .h.k { color: #fff; }
+  .cmp.tight > div { padding: 10px 14px; font-size: 16px; }
+  .cmp.mini { grid-template-columns: 128px minmax(0,1fr) minmax(0,1fr); }
+  .cmp.mini > div { padding: 12px 12px; font-size: 16px; }
+  .cmp.mini .h { font-size: 15px; font-family: "JetBrains Mono", monospace; }
+  .split.wide-r { grid-template-columns: minmax(0,1fr) minmax(0,1.1fr); }
+  /* группы доступа */
+  .groups { display: grid; grid-template-columns: minmax(0,1.15fr) minmax(0,1fr); gap: 36px; align-items: start; }
+  .grp { display: flex; flex-direction: column; gap: 12px; }
+  .grp div { border: 1px solid var(--ink); background: #fff; padding: 11px 14px; display: grid; grid-template-columns: 250px 1fr; gap: 14px; font-size: 16px; line-height: 1.35; color: var(--muted); }
+  .grp div b { font-family: "JetBrains Mono", monospace; font-size: 15px; color: var(--ink); }
+  .grp div.blue { border-color: var(--blue); box-shadow: 4px 4px 0 var(--blue); }
+  ul.lim { list-style: none; display: flex; flex-direction: column; gap: 13px; }
+  ul.lim li { font-size: 18px; line-height: 1.4; display: grid; grid-template-columns: 30px 1fr; }
+  ul.lim li::before { content: "→"; color: var(--blue); font-weight: 800; }
+  ul.lim li b { display: block; }
+  ul.lim li span { color: var(--muted); font-size: 15px; }
+  .term { background: var(--ink); color: #e9e8e2; font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; font-size: 15px; line-height: 1.75; padding: 20px 24px; box-shadow: 8px 8px 0 var(--blue); white-space: pre-wrap; }
+  .term i { font-style: normal; color: #9fb0ff; }
+  .term s { text-decoration: none; color: #8b8a84; }
+  .split { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 40px; align-items: start; }
+  .final { display: grid; grid-template-columns: minmax(0,1fr) 560px; gap: 50px; align-items: center; height: 100%; }
+  .final h1 { font-size: 56px; }
+  /* навигация */
+  #nav { position: fixed; right: 18px; bottom: 16px; z-index: 40; display: flex; align-items: center; gap: 8px; background: rgba(239,238,232,.95); border: 1px solid var(--ink); padding: 5px 9px; }
+  #nav button { font: inherit; font-size: 16px; width: 26px; height: 24px; cursor: pointer; background: none; border: none; }
+  #nav .p { font-family: "JetBrains Mono", monospace; font-size: 12px; min-width: 46px; text-align: center; }
+  #bar { position: fixed; left: 0; top: 0; height: 3px; background: var(--blue); z-index: 41; transition: width .18s; }
+  /* Телефон: слайды лентой без масштаба. */
+  @media (max-width: 700px), (orientation: portrait) and (max-width: 900px) {
+    html, body { height: auto; overflow: auto; display: block; background: var(--bg); }
+    #stage { position: static; width: auto; height: auto; transform: none !important; }
+    .slide { position: relative; inset: auto; display: flex !important; padding: 40px 18px 44px; border-bottom: 1px solid var(--line); }
+    .slide.center { padding-top: 40px; }
+    #nav, #bar { display: none; }
+    .slide > .note { padding-right: 0; }
+    h1, .final h1 { font-size: 34px; } h2 { font-size: 28px; margin-bottom: 20px; }
+    .lead { font-size: 18px; } .quote { font-size: 19px; }
+    .cover, .final, .split, .groups { grid-template-columns: 1fr; gap: 24px; height: auto; }
+    .photo { width: 150px; height: 150px; } .site { max-width: 260px; }
+    .cards, .three, .codes { grid-template-columns: 1fr; gap: 16px; }
+    .flow { grid-template-columns: 1fr; } .flow > .arr { height: 30px; transform: rotate(90deg); }
+    .cmp, .cmp.tight, .cmp.mini { grid-template-columns: 1fr; } .split.wide-r { grid-template-columns: 1fr; } .cmp > div { border-bottom: 1px solid var(--line); }
+    .cmp > div:nth-last-child(-n+3) { border-bottom: 1px solid var(--line); }
+    .cmp .k { background: #f3f2ec; padding-top: 8px; padding-bottom: 8px; } .cmp .h.k { display: none; }
+    .grp div { grid-template-columns: 1fr; gap: 4px; }
+    .term { font-size: 13px; padding: 16px; }
+    ul.lim li { font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div id="stage">
+  <section class="slide center on" data-title="Титул">
+    <div class="cover"><div>
+      <p class="kicker">AUTHENTIK · КОНТУР PO</p>
+      <h1>Один вход для людей,<br>агентов <span class="accent">и ИИ</span></h1>
+      <p class="lead">Как в мой контур — виджеты, отчёты, агенты Hermes, коннектор для Claude — встроен Authentik. Какие вопросы безопасности он закрывает и что по-прежнему остаётся на человеке.</p>
+      <p class="quote">Кто ты — решает Authentik.<br>Что тебе можно — решают группы.</p>
+    </div><div><img class="photo" id="coverPhoto" alt="Автор"><a class="site" href="https://aleksishmanov.ru/" target="_blank" rel="noopener"><span>aleksishmanov.ru</span><i>↗</i></a></div></div>
+  </section>
+
+  <section class="slide" data-title="Как было">
+    <p class="label">Как было</p>
+    <h2>Самописный гейт <span class="accent">перестал вывозить</span></h2>
+    <div class="cards">
+      <div class="card"><span class="tag">1 · ОДИН ЧЕЛОВЕК</span><h3>Новый человек — правка кода</h3><p>Гейт знал одного пользователя. Дать техлиду только отчёты значило дописать гейт и завести ещё одну куку.</p></div>
+      <div class="card"><span class="tag">2 · НЕТ ПРОТОКОЛА</span><h3>Приложения не умели «войти через»</h3><p>Grafana и другие сервисы с OIDC могли получить только куку гейта — нормального единого входа не было.</p></div>
+      <div class="card red"><span class="tag">3 · ИНЦИДЕНТ</span><h3>Учётка жила в файлах</h3><p>Перенос гейта под другого пользователя сгенерировал новые секреты, и вход лежал до ручного восстановления. Журнал входов — только текст в системном логе.</p></div>
+      <div class="card"><span class="tag">4 · ЗООПАРК</span><h3>У каждой интеграции свой механизм</h3><p>Агенты — по подписи, коннектор ИИ — свой OAuth поверх гейта, люди — кука. Три механизма и ноль общей диагностики.</p></div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Почему Authentik">
+    <p class="label">Выбор</p>
+    <h2>Почему <span class="accent">Authentik</span></h2>
+    <div class="cmp tight">
+      <div class="h k"></div><div class="h">Чем плох</div><div class="h b">Что получили с Authentik</div>
+      <div class="k">Оставить гейт</div><div>Не закрывает ни одной из четырёх проблем; каждая интеграция — снова свой код</div><div>Пользователи, группы и политики в интерфейсе; вход по протоколу (forward-auth, OIDC)</div>
+      <div class="k">Authelia</div><div>Легче по памяти, но это конфиг в YAML без каталога пользователей</div><div>«Дать команде одну группу» — запись в справочнике, а не правка файлов</div>
+      <div class="k">Keycloak</div><div>Тяжелее (Java) и сложнее в интерфейсе при ограниченной памяти сервера</div><div>Легче, с понятным интерфейсом и готовым forward-auth для nginx</div>
+      <div class="k">Цена</div><div>У гейта — один файл и ~30 МБ памяти</div><div>Платформа: ~2–2,5 ГБ памяти с лимитами и больше движущихся частей</div>
+    </div>
+    <p class="note">Authelia осталась запасным вариантом на случай, если память не позволит. Переезжали по одному приложению, старый гейт работал параллельно — откат любого шага одной строкой конфига.</p>
+  </section>
+
+  <section class="slide" data-title="Путь запроса">
+    <p class="label">Как встроен</p>
+    <h2>Каждый запрос <span class="accent">сначала спрашивает Authentik</span></h2>
+    <div class="flow">
+      <div class="node"><b>Браузер</b>открывает отчёт, виджет или страницу согласия ИИ-коннектора</div>
+      <div class="arr">→</div>
+      <div class="node"><b>nginx сервера</b>до приложения — подзапрос «можно ли?» (auth_request)</div>
+      <div class="arr">→</div>
+      <div class="node blue"><b>Caddy коробки</b>спрашивает outpost Authentik и сверяет группу с приложением</div>
+      <div class="arr">→</div>
+      <div class="node blue"><b>Authentik</b>сессия, второй фактор, группы человека</div>
+    </div>
+    <div class="codes">
+      <div class="code in"><b>401</b>сессии нет — nginx уводит на вход Authentik и после входа возвращает на ту же страницу</div>
+      <div class="code no"><b>403</b>вошёл, но нет группы этого приложения — страница «нет доступа», а не пустой экран</div>
+      <div class="code ok"><b>200</b>можно; в ответе — логин и группы, приложение знает, кто пришёл</div>
+    </div>
+    <p class="note">Приложения ничего не знают о паролях и втором факторе: это схема forward-auth. Новое приложение за входом — одна строка в конфиге, а не код.</p>
+  </section>
+
+  <section class="slide" data-title="Подделка">
+    <p class="label">Защита от подделки</p>
+    <h2>Свою группу <span class="accent">не подставишь</span></h2>
+    <div class="split">
+      <div>
+        <ul class="lim">
+          <li><div><b>Заголовки «кто вошёл» клиента обнуляются</b><span>nginx и мост стирают X-Authentik-Username и X-Authentik-Groups из запроса; их ставит только outpost</span></div></li>
+          <li><div><b>Приложение перепроверяет само</b><span>страница согласия ИИ-коннектора повторно спрашивает Authentik — на случай, если кто-то обойдёт nginx изнутри сервера</span></div></li>
+          <li><div><b>Наружу слушает только nginx</b><span>Authentik, его база и Caddy привязаны к 127.0.0.1</span></div></li>
+          <li><div><b>Проверено тестом</b><span>CI поднимает настоящие контейнеры: запрос с поддельным «poh-box-owners» в заголовке получает 403</span></div></li>
+        </ul>
+      </div>
+      <div class="term"><s># чужой пытается выдать себя за владельца</s>
+GET /edge-authz/harness
+Authorization: Basic ci-inbox-only:…
+X-Authentik-Groups: poh-box-owners
+
+<i>→ 403</i>  <s># группа берётся из сессии,</s>
+         <s># а не из заголовка клиента</s></div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Доступ группами">
+    <p class="label">Кому что можно</p>
+    <h2>Доступ — <span class="accent">это группа</span>, а не код</h2>
+    <div class="groups">
+      <div class="grp">
+        <div class="blue"><b>владельцы, администраторы</b>всё</div>
+        <div><b>доступ: &lt;приложение&gt;</b>одно приложение: отчёты, Инбокс, почта, календарь…</div>
+        <div><b>mcp: atlassian-read</b>ИИ-коннектор: только чтение Jira и Confluence</div>
+        <div><b>mcp: full</b>ИИ-коннектор целиком</div>
+        <div><b>вход: без второго фактора</b>ничего не открывает — только меняет способ входа</div>
+      </div>
+      <div class="card blue"><span class="tag">ПРИМЕР · ТЕХЛИД</span><h3>Видит отчёт спринта и больше ничего</h3><p>Учётка в группах «доступ: sprints» и «доступ: business» (вкладки отчёта грузят обе) и «mcp: atlassian-read». Почта, агенты, сервер — 403. Дать или забрать — одна группа.</p></div>
+    </div>
+    <p class="note">Группа приложения появляется вместе с приложением: генератор заводит её в Authentik сам. Решение по группе принимает Caddy, поэтому одна и та же проверка работает для людей, агентов и ИИ.</p>
+  </section>
+
+  <section class="slide" data-title="Вход как код">
+    <p class="label">Конфигурация как код</p>
+    <h2>Настройки входа живут <span class="accent">в git</span></h2>
+    <div class="split">
+      <div class="term"><s># box-settings — одна строка на решение</s>
+<i>BOX_AUTH_USERS</i>=techlead:…:sprints+business
+                 +mcp-atlassian-read
+<i>BOX_AUTH_NO_MFA</i>=techlead
+<i>BOX_AUTH_AGENTS</i>=agent-news:news+linkshort
+<i>BOX_MCP_PROFILES</i>=full,atlassian-read
+
+<s># → генератор собирает blueprint Authentik:</s>
+<s>#   группы, приложения, учётки, политики</s></div>
+      <ul class="lim">
+        <li><div><b>Blueprint вместо кликов</b><span>Authentik применяет его сам; руками в интерфейсе такие учётки не правят — blueprint перепишет</span></div></li>
+        <li><div><b>Секретов в git нет</b><span>пароли, токены агентов, ключи Authentik — в файле на сервере с правами 600</span></div></li>
+        <li><div><b>Каждая правка — PR и CI</b><span>CI поднимает Authentik, Caddy и заглушки и проверяет вход снаружи, как браузер</span></div></li>
+        <li><div><b>На сервер — только из main</b><span>обновлятор тянет fast-forward и откатывается при сбое; правка на сервере блокирует обновления</span></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Второй фактор">
+    <p class="label">Второй фактор</p>
+    <h2>Пароля мало — <span class="accent">с одним исключением</span></h2>
+    <div class="three">
+      <div class="card blue"><span class="tag">ПО УМОЛЧАНИЮ</span><h3>Ключ или код обязательны</h3><p>Passkey (WebAuthn) или TOTP. Нет ни того, ни другого — Authentik заставит завести при первом входе.</p></div>
+      <div class="card"><span class="tag">ИСКЛЮЧЕНИЕ</span><h3>Группа «вход: без второго фактора»</h3><p>Для гостя в окне виджета мессенджера: passkey во фрейме может не сработать, TOTP — чужое устройство. Только логин и пароль.</p></div>
+      <div class="card red"><span class="tag">FAIL CLOSED</span><h3>Ошибка — фактор остаётся</h3><p>Если политика исключения сломается, второй фактор не пропадёт у всех. Оба конца проверяет CI: гостю — без фактора, владельцу — с ним.</p></div>
+    </div>
+    <p class="note">Учётка без второго фактора держится на одном пароле, поэтому она узкая по доступу и её пароль меняется после демонстрации. Вернуть фактор — убрать логин из одной строки настроек.</p>
+  </section>
+
+  <section class="slide" data-title="Агенты">
+    <p class="label">Агенты и сервисы</p>
+    <h2>Агент — <span class="accent">тоже учётка</span></h2>
+    <div class="cards">
+      <div class="card blue"><span class="tag">СЕРВИСНЫЙ АККАУНТ</span><h3>Токен вместо пароля</h3><p>Агент входит заголовком Authorization с токеном приложения. У него свои группы — те же «доступ: &lt;приложение&gt;», что у людей: агент ленты видит ленту, но не почту.</p></div>
+      <div class="card"><span class="tag">ГРАНИЦА</span><h3>Сначала подпись агента, потом человек</h3><p>Где агенты ходили по подписи Ed25519, проверка идёт двумя ступенями: верная подпись — пропуск, иначе — обычный вход человека. Неверная подпись получает форму входа, а не доступ.</p></div>
+      <div class="card"><span class="tag">ОТЗЫВ</span><h3>Отключить — в одном месте</h3><p>Выключить учётку или забрать группу в Authentik — агент теряет доступ ко всем приложениям сразу.</p></div>
+      <div class="card"><span class="tag">ПРОВЕРЕНО</span><h3>Свой — 200, чужой — 403</h3><p>CI: агент со своим токеном открывает свои приложения, чужое — 403, неверный токен — 401.</p></div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="ИИ-коннектор">
+    <p class="label">ИИ-коннектор (MCP)</p>
+    <h2>Инструменты Claude — <span class="accent">по учётке</span></h2>
+    <div class="split wide-r">
+      <ul class="lim">
+        <li><div><b>Подключение — через вход Authentik</b><span>Claude получает доступ к коннектору только после согласия на странице за входом</span></div></li>
+        <li><div><b>Страница согласия узнаёт, кто вошёл</b><span>логин и группы приходят из того же ответа Authentik, профиль кладётся в токен</span></div></li>
+        <li><div><b>Права решает сервер, а не клиент</b><span>scope из запроса клиента игнорируется; расширить его на обновлении нельзя</span></div></li>
+        <li><div><b>Снятая группа действует без нового входа</b><span>токен живёт час; на обновлении группы перечитываются в API Authentik</span></div></li>
+        <li><div><b>Удаления в Jira и Confluence закрыты всем</b><span>даже полному профилю</span></div></li>
+      </ul>
+      <div class="cmp mini">
+        <div class="h k"></div><div class="h">mcp: atlassian-read</div><div class="h b">mcp: full</div>
+        <div class="k">Jira, Confluence</div><div>только чтение</div><div>чтение и запись</div>
+        <div class="k">Агенты, доска</div><div>нет</div><div>да</div>
+        <div class="k">Shell сервера</div><div>нет</div><div>да, с подтверждением</div>
+        <div class="k">Код сервера</div><div>нет</div><div>да, только чтение</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Что закрыто">
+    <p class="label">Итог по угрозам</p>
+    <h2>Какие вопросы безопасности <span class="accent">закрыты</span></h2>
+    <div class="cmp tight">
+      <div class="h k"></div><div class="h">Угроза</div><div class="h b">Чем закрыто</div>
+      <div class="k">Пароль утёк</div><div>Входят с чужим паролем</div><div>Второй фактор у всех, кроме узких учёток с исключением</div>
+      <div class="k">Лишний доступ</div><div>Человек или агент видит больше, чем нужно</div><div>Группа на приложение; профиль инструментов ИИ по группе</div>
+      <div class="k">Подделка</div><div>Клиент подставляет себе группу владельца</div><div>Заголовки клиента обнуляются, группа — только из сессии</div>
+      <div class="k">Токен ИИ утёк</div><div>Чужой работает от имени Claude</div><div>Узкий профиль, час жизни, отзыв по учётке одной командой</div>
+      <div class="k">Ушёл человек</div><div>Доступы раскиданы по сервисам</div><div>Выключить учётку в одном месте — закрыто всё</div>
+      <div class="k">Потеря админа</div><div>Вход сломался — никто не войдёт</div><div>Коды восстановления вне сервера, бэкап базы, вход восстановления</div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Грабли">
+    <p class="label">Грабли эксплуатации</p>
+    <h2>Чему мы <span class="accent">научились</span></h2>
+    <div class="cards">
+      <div class="card"><span class="tag">КРУГ ВХОДА</span><h3>Форма появляется и исчезает</h3><p>Почти всегда упал бэкенд за входом, а не Authentik. Сначала проверить сервис приложения, потом трогать вход.</p></div>
+      <div class="card red"><span class="tag">ПРАВКА НА СЕРВЕРЕ</span><h3>Обновления молча встали</h3><p>Две правки входа сделали прямо на сервере — обновлятор по своей защите пропускал каждую выкладку несколько дней. Только PR и main.</p></div>
+      <div class="card"><span class="tag">ФРЕЙМЫ</span><h3>Куки во фрейме мессенджера</h3><p>Виджеты открываются в iframe, где куки входа могут считаться сторонними. Проверяли внутри мессенджера до переключения каждого виджета.</p></div>
+      <div class="card"><span class="tag">КИРИЛЛИЦА</span><h3>«доступ: pi» в заголовке</h3><p>Группы приходят сырыми байтами UTF-8, а Python читает заголовки как latin-1. Без перекодировки группа «не совпадает» — и человеку отказ.</p></div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Границы">
+    <p class="label">Честно о границах</p>
+    <h2>Что Authentik <span class="accent">не решает</span></h2>
+    <div class="cards">
+      <div class="card"><h3>Права внутри приложения</h3><p>ИИ-коннектор читает Jira от служебной учётки: техлид увидит всё, что видит она, а не только свои проекты.</p></div>
+      <div class="card"><h3>Один сервер</h3><p>Authentik — точка входа во всё. Упал он или память кончилась — не войдёт никто. Отсюда лимиты, бэкап и запасной путь восстановления.</p></div>
+      <div class="card blue"><h3>Что делать после входа</h3><p>Запись в Jira, сообщения людям, shell — помечены, и клиент спрашивает разрешение. Это дисциплина человека, а не блокировка.</p></div>
+      <div class="card"><h3>Пароль без второго фактора</h3><p>Исключение для гостей удобно, но держится на одном пароле. Компенсируем узким доступом и сменой пароля.</p></div>
+    </div>
+  </section>
+
+  <section class="slide center" data-title="Памятка">
+    <div class="final">
+      <div>
+        <h1>Дать доступ —<br><span class="accent">одна группа</span></h1>
+        <p class="lead">Новый человек, агент или приложение — запись в настройках входа и PR. Забрать доступ — так же. Всё остальное делает Authentik.</p>
+      </div>
+      <div class="term"><i>человек</i>   учётка + «доступ: &lt;приложение&gt;»
+<i>гость</i>     + «вход: без второго фактора»,
+          пароль сменить после показа
+<i>агент</i>     сервисный аккаунт + токен
+<i>ИИ</i>        «mcp: atlassian-read» | «mcp: full»
+<i>забрать</i>   выключить учётку или группу
+<i>сломалось</i> сначала бэкенд, потом вход</div>
+    </div>
+  </section>
+</div>
+<div id="nav">
+  <button id="prev" title="Назад">‹</button><span class="p mono" id="pos"></span><button id="next" title="Вперёд">›</button>
+</div>
+<script>
+  var PHOTO = "/okr-quarter-planning/img/photo.webp";
+  var slides = [].slice.call(document.querySelectorAll('.slide'));
+  var cur = 0;
+  var narrow = window.matchMedia('(max-width: 700px), (orientation: portrait) and (max-width: 900px)');
+  function fit() {
+    var st = document.getElementById('stage');
+    if (narrow.matches) { st.style.transform = 'none'; st.style.left = st.style.top = ''; return; }
+    var w = document.documentElement.clientWidth, h = document.documentElement.clientHeight;
+    var s = Math.min(w / 1280, h / 720);
+    st.style.left = Math.round((w - 1280 * s) / 2) + 'px';
+    st.style.top = Math.round((h - 720 * s) / 2) + 'px';
+    st.style.transform = 'scale(' + s + ')';
+  }
+  window.addEventListener('resize', fit); fit();
+  function show(i, push) {
+    cur = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach(function (s, k) { s.classList.toggle('on', k === cur); });
+    document.getElementById('pos').textContent = (cur + 1) + ' / ' + slides.length;
+    document.getElementById('bar').style.width = ((cur + 1) / slides.length * 100) + '%';
+    if (push !== false) history.replaceState(null, '', '#slide=' + (cur + 1));
+    else if (narrow.matches && cur > 0) slides[cur].scrollIntoView();
+  }
+  window.addEventListener('load', function () { if (narrow.matches && cur > 0) slides[cur].scrollIntoView(); });
+  document.getElementById('prev').onclick = function () { show(cur - 1); };
+  document.getElementById('next').onclick = function () { show(cur + 1); };
+  var photo = document.getElementById('coverPhoto');
+  if (photo && PHOTO) photo.src = PHOTO;
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); show(cur + 1); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); show(cur - 1); }
+    if (e.key === 'Home') { e.preventDefault(); show(0); }
+    if (e.key === 'End') { e.preventDefault(); show(slides.length - 1); }
+  });
+  function fromHash() { var m = location.hash.match(/slide=(\d+)/); return m ? parseInt(m[1], 10) - 1 : 0; }
+  window.addEventListener('hashchange', function () { show(fromHash(), false); });
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  show(fromHash(), false);
+</script>
+</body>
+</html>
