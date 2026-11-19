@@ -15,7 +15,6 @@
 - `release-journal` — Релизы: факт отгрузки, а не статус в Jira
 - `authentik-security` — Один вход для людей, агентов и ИИ: безопасность контура через Authentik
 - `cortex-po-agents` — Общая память ИИ-агентов: факт становится фактом, когда его принял руководитель (статья текстом — `/cortex-po-agents/article/`)
-- `agent-self-reflection` — Саморефлексия ИИ-агентов: у агентов та же картина команды, что у руководителя
 - `hermes-bridge-hq` — Штаб корпоративных агентов в кармане: Claude Code с телефона
 - `claude-desktop-zai-macos` — Claude Desktop с Китайскими моделями
 - `po-workspace-bft-plugin` — БФТ под управлением руководителя
