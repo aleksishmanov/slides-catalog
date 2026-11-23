@@ -60,4 +60,6 @@ cd glm-practice</code></li><li>Запустите Claude Code<code>claude</code>
     let touchX=0;addEventListener('touchstart',e=>touchX=e.changedTouches[0].clientX,{passive:true});addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-touchX;if(Math.abs(d)>55)show(current+(d<0?1:-1))},{passive:true});
     addEventListener('workshop-sidebar-open',()=>document.querySelector('.nav').hidden=true);addEventListener('workshop-sidebar-close',()=>document.querySelector('.nav').hidden=false);
   </script>
+<script src="/catalog.js" defer></script>
+<script src="/components/related.js" defer></script>
 </body></html>
