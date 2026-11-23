@@ -2,6 +2,15 @@
 // показывает components/related.js, проверяет tools/check_decks.py.
 const presentations = [
   {
+    id: "initiatives-year-report",
+    title: "Все инициативы за год для генерального директора, когда на отчёт дали час",
+    description: "Директор по продукту просит за час собрать все инициативы за год, описать каждую и подать в его форме. Отчёт складывается из бизнес-отчётов спринта и ежедневной рефлексии агентов: статусы в Jira и документах уже сверены, у инициатив записано обоснование. Случай автора и демо на вымышленной команде.",
+    cover: "initiatives-year-report/cover.png",
+    slides: 12,
+    updated: "23 ноября 2026",
+    related: ["sprint-business-report", "agent-reflection-comments", "sprint-under-manager"]
+  },
+  {
     id: "call-reminders-sync",
     title: "Напоминания после созвона: сверка с ИИ-агентом в календаре",
     description: "После рефлексии созвона ИИ-агент заносит в рабочий календарь только то, что вы обещали сделать сами: одно дело — одно напоминание, без дублей. Закрыли напоминание или ответили в заметке — агент это видит. Штатные «Напоминания» на iPhone, задачи Exchange, без своего приложения и платных зависимостей.",
@@ -26,7 +35,7 @@ const presentations = [
     cover: "agent-reflection-comments/cover.png",
     slides: 14,
     updated: "19 ноября 2026",
-    related: ["call-reminders-sync", "call-transcript-guarantee", "call-reflection-goals", "cortex-po-agents", "po-morning-brief"]
+    related: ["call-reminders-sync", "call-transcript-guarantee", "call-reflection-goals", "cortex-po-agents", "po-morning-brief", "initiatives-year-report"]
   },
   {
     id: "call-reflection-goals",
@@ -134,7 +143,7 @@ const presentations = [
     cover: "sprint-under-manager/cover.png",
     slides: 20,
     updated: "19 октября 2026",
-    related: ["call-reminders-sync", "sprint-daily-report", "sprint-business-report", "sprint-blockers-report"]
+    related: ["call-reminders-sync", "sprint-daily-report", "sprint-business-report", "sprint-blockers-report", "initiatives-year-report"]
   },
   {
     id: "okr-quarter-planning",
@@ -161,7 +170,7 @@ const presentations = [
     cover: "sprint-business-report/cover.png",
     slides: 16,
     updated: "19 октября 2026",
-    related: ["po-morning-brief", "sprint-daily-report", "sprint-under-manager", "okr-quarter-planning", "release-journal"]
+    related: ["po-morning-brief", "sprint-daily-report", "sprint-under-manager", "okr-quarter-planning", "release-journal", "initiatives-year-report"]
   },
   {
     id: "sprint-blockers-report",
