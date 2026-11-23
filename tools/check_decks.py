@@ -105,6 +105,33 @@ def check(deck, catalog):
     return errs, warns, size
 
 
+def parse_related(catalog):
+    """id колоды → список related из catalog.js."""
+    rel = {}
+    for m in re.finditer(r'\{\s*id: "([^"]+)"(.*?)\n  \}', catalog, re.S):
+        r = re.search(r'related:\s*\[([^\]]*)\]', m.group(2))
+        rel[m.group(1)] = re.findall(r'"([^"]+)"', r.group(1)) if r else []
+    return rel
+
+
+def check_related(deck, rel, page):
+    """Связанные: ссылка ведёт на существующую колоду, обратная ссылка есть, компонент подключён."""
+    errs = []
+    own = rel.get(deck, [])
+    for r in own:
+        if r == deck:
+            errs.append('related ссылается на саму себя')
+        elif r not in rel or not os.path.isfile(os.path.join(ROOT, r, 'index.html')):
+            errs.append(f'related: колоды «{r}» нет в каталоге или нет {r}/index.html')
+        elif deck not in rel[r]:
+            errs.append(f'related: {r} не ссылается обратно на {deck}')
+    if len(set(own)) != len(own):
+        errs.append('related: повтор в списке')
+    if own and not ('src="/catalog.js"' in page and 'src="/components/related.js"' in page):
+        errs.append('есть related, но блок «Связанные» не подключён (/catalog.js + /components/related.js в конце <body>)')
+    return errs
+
+
 def main():
     catalog = open(os.path.join(ROOT, 'catalog.js'), encoding='utf-8').read()
     exc = {}
@@ -113,9 +140,11 @@ def main():
         exc = json.load(open(ep, encoding='utf-8'))
     decks = sys.argv[1:] or sorted(d for d in os.listdir(ROOT)
                                    if d not in SKIP and os.path.isfile(os.path.join(ROOT, d, 'index.html')))
+    rel = parse_related(catalog)
     failed = False
     for d in decks:
         errs, warns, size = check(d, catalog)
+        errs += check_related(d, rel, open(os.path.join(ROOT, d, 'index.html'), encoding='utf-8').read())
         if d in exc:
             warns = [e + ' (исключение: ' + exc[d] + ')' for e in errs] + warns
             errs = []
