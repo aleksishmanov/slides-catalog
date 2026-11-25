@@ -9,6 +9,7 @@
 
 Опубликованные презентации:
 
+- `harness-evolution` — Как рос Harness: 14 шагов от промпта до агентского центра (схемы — LikeC4)
 - `initiatives-year-report` — Все инициативы за год для генерального директора из итогов спринтов
 - `call-reminders-sync` — Напоминания после созвона: сверка с ИИ-агентом в календаре
 - `call-transcript-guarantee` — Расшифровка созвона есть всегда: агент присутствия вместо вас
@@ -61,6 +62,22 @@ python3 -m http.server 8080 & BASE=http://localhost:8080 node tools/check_mobile
    `<script src="/catalog.js" defer></script>` и `<script src="/components/related.js" defer></script>`.
 7. Прогнать проверки (раздел выше) — обе зелёные.
 8. PR в `main`; после слияния сайт обновится автоматически.
+
+## Диаграммы LikeC4
+
+Архитектурные схемы колоды можно описывать кодом в [LikeC4](https://likec4.dev): элементы и связи — один раз
+в модели, каждая схема — вид (`view`) с нужным срезом. Пример — `harness-evolution`: одна модель, вид на этап.
+
+- Исходник — `<deck>/likec4/*.c4`.
+- Сборка — `node tools/build_likec4.mjs <deck>` (нужны сеть к npm, Playwright с Chromium, python3 с Pillow;
+  `PW=`/`CHROME=` — как у `check_mobile.mjs`). Получается `<deck>/likec4/views.js` (web-компонент
+  `<likec4-view>`, ~3 МБ) и снимки `<deck>/img/c4-<view>.webp`. Версия LikeC4 закреплена в скрипте:
+  повторная сборка даёт тот же файл. Сборка — часть правки модели, результат коммитится (сайт без сборки).
+- На слайде — `<figure class="c4" data-c4-view="<view>" data-c4-src="likec4/views.js">` со снимком внутри
+  (`<a href="img/c4-<view>.webp"><img src="img/c4-<view>.webp" loading="lazy" alt="…"></a>`) и
+  `<script src="/components/likec4.js" defer></script>` в конце `<body>`.
+- Телефон показывает снимок (тап открывает его для зума); десктоп грузит компонент только когда открыт слайд со
+  схемой и меняет снимок на живую схему (клик открывает её на весь экран). Первая загрузка колоды его не включает.
 
 ## Связанные колоды
 

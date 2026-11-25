@@ -2,6 +2,15 @@
 // показывает components/related.js, проверяет tools/check_decks.py.
 const presentations = [
   {
+    id: "harness-evolution",
+    title: "Как рос Harness: 14 шагов от промпта до агентского центра",
+    description: "История личного ИИ-контура руководителя продукта: каждый шаг — ответ на конкретную боль. От промпта и папки .md до агентов на своём сервере, виджетов в мессенджере и моста MCP + A2A. Схема каждого этапа — интерактивная диаграмма LikeC4.",
+    cover: "harness-evolution/cover.png",
+    slides: 18,
+    updated: "25 ноября 2026",
+    related: ["hermes-bridge-hq", "authentik-security", "cortex-second-brain", "po-news-feed"]
+  },
+  {
     id: "initiatives-year-report",
     title: "Все инициативы за год для генерального директора из итогов спринтов",
     description: "Как собрать для генерального директора все инициативы за год, когда отчёт нужен срочно. Отчёт складывается из бизнес-отчётов спринта и утренней рефлексии агентов: что записывать по ходу года и где нужен человек. Случай автора и демо на вымышленной команде.",
@@ -62,7 +71,7 @@ const presentations = [
     cover: "authentik-security/cover.png",
     slides: 14,
     updated: "19 ноября 2026",
-    related: ["hermes-bridge-hq"]
+    related: ["hermes-bridge-hq", "harness-evolution"]
   },
   {
     id: "cortex-po-agents",
@@ -80,7 +89,7 @@ const presentations = [
     cover: "hermes-bridge-hq/cover.png",
     slides: 13,
     updated: "21 октября 2026",
-    related: ["call-reminders-sync", "cortex-po-agents", "authentik-security", "claude-desktop-zai-macos"]
+    related: ["call-reminders-sync", "cortex-po-agents", "authentik-security", "claude-desktop-zai-macos", "harness-evolution"]
   },
   {
     id: "po-news-gazette",
@@ -161,7 +170,7 @@ const presentations = [
     cover: "po-news-feed/cover.png",
     slides: 11,
     updated: "13 октября 2026",
-    related: ["call-reminders-sync", "call-transcript-guarantee", "po-morning-brief", "po-news-gazette"]
+    related: ["call-reminders-sync", "call-transcript-guarantee", "po-morning-brief", "po-news-gazette", "harness-evolution"]
   },
   {
     id: "sprint-business-report",
@@ -188,7 +197,7 @@ const presentations = [
     cover: "cortex-second-brain/cover.png",
     slides: 11,
     updated: "18 октября 2026",
-    related: ["call-reminders-sync", "call-reflection-goals", "cortex-po-agents", "okr-quarter-planning"]
+    related: ["call-reminders-sync", "call-reflection-goals", "cortex-po-agents", "okr-quarter-planning", "harness-evolution"]
   }
 ];
 

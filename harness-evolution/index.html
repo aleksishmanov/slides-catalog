@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Как рос Harness: 14 шагов от промпта до агентского центра</title>
+<meta name="description" content="История личного ИИ-контура руководителя продукта: каждый шаг — ответ на конкретную боль. От промпта и папки .md до агентов на своём сервере, виджетов в мессенджере и моста MCP + A2A. Схема каждого этапа — интерактивная диаграмма LikeC4.">
+<link rel="canonical" href="https://slides.aleksishmanov.ru/harness-evolution/">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Каталог презентаций · Алексей Ишманов">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://slides.aleksishmanov.ru/harness-evolution/">
+<meta property="og:title" content="Как рос Harness: 14 шагов от промпта до агентского центра">
+<meta property="og:description" content="История личного ИИ-контура руководителя продукта: каждый шаг — ответ на конкретную боль. От промпта и папки .md до агентов на своём сервере, виджетов в мессенджере и моста MCP + A2A. Схема каждого этапа — интерактивная диаграмма LikeC4.">
+<meta property="og:image" content="https://slides.aleksishmanov.ru/harness-evolution/cover.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="720">
+<meta property="og:image:alt" content="Первый слайд презентации «Как рос Harness: 14 шагов от промпта до агентского центра»">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Как рос Harness: 14 шагов от промпта до агентского центра">
+<meta name="twitter:description" content="История личного ИИ-контура руководителя продукта: каждый шаг — ответ на конкретную боль. От промпта и папки .md до агентов на своём сервере, виджетов в мессенджере и моста MCP + A2A. Схема каждого этапа — интерактивная диаграмма LikeC4.">
+<meta name="twitter:image" content="https://slides.aleksishmanov.ru/harness-evolution/cover.png">
+<meta name="twitter:image:alt" content="Первый слайд презентации «Как рос Harness: 14 шагов от промпта до агентского центра»">
+<style>
+  /* Айдентика каталога (как authentik-security): бежевый фон, чёрный и синий, моноширинные подписи,
+     карточки с жёсткой тенью. Схемы — LikeC4 (components/likec4.js): снимок, на десктопе — живая схема. */
+  :root { --bg:#efeee8; --ink:#080808; --blue:#2437ed; --muted:#51514b; --line:#c9c8c2; --red:#d8302a; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: #d9d8d3; }
+  body { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; color: var(--ink); overflow: hidden; }
+  .mono { font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; }
+  #stage { position: fixed; left: 0; top: 0; width: 1280px; height: 720px; flex: none; transform-origin: 0 0; }
+  .slide { position: absolute; inset: 0; padding: 56px 64px 48px; display: none; flex-direction: column; justify-content: flex-start; background: var(--bg); overflow: hidden; }
+  .slide.on { display: flex; }
+  .slide.center { justify-content: center; padding-top: 56px; }
+  .accent { color: var(--blue); }
+  h1 { font-size: 58px; line-height: 1.05; letter-spacing: -.045em; font-weight: 800; }
+  h2 { font-size: 40px; line-height: 1.08; letter-spacing: -.04em; font-weight: 800; margin-bottom: 22px; }
+  .label { font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; font-size: 14px; font-weight: 700; letter-spacing: .08em; color: var(--blue); margin-bottom: 14px; text-transform: uppercase; }
+  .lead { font-size: 22px; line-height: 1.4; margin-top: 22px; max-width: 760px; }
+  .note { font-size: 14px; color: var(--muted); margin-top: 18px; line-height: 1.45; }
+  .slide > .note { padding-right: 150px; }
+  .kicker { font-family: "JetBrains Mono", monospace; font-size: 16px; font-weight: 700; letter-spacing: .06em; color: var(--muted); margin-bottom: 22px; }
+  /* титул */
+  .cover { display: grid; grid-template-columns: minmax(0,1fr) 300px; gap: 56px; align-items: center; }
+  .photo { width: 300px; height: 300px; object-fit: cover; border: 1px solid var(--ink); box-shadow: 8px 8px 0 var(--blue); display: block; }
+  .site { display: flex; justify-content: space-between; margin-top: 22px; border: 1px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); text-decoration: none; color: var(--ink); }
+  .site span { font-family: "JetBrains Mono", monospace; font-size: 17px; font-weight: 700; padding: 13px 16px; }
+  .site i { display: flex; align-items: center; justify-content: center; width: 46px; background: var(--blue); color: #fff; font-style: normal; }
+  /* карта пути */
+  .phases { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 18px; }
+  .ph { border: 1px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); background: #fff; padding: 16px 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+  .ph:nth-child(3) { border-color: var(--blue); box-shadow: 6px 6px 0 var(--blue); }
+  .ph .tag { align-self: flex-start; margin-bottom: 8px; }
+  .ph:nth-child(3) .tag { background: var(--blue); }
+  .st { display: grid; grid-template-columns: 30px 1fr; gap: 6px; font-size: 14px; line-height: 1.35; color: var(--muted); text-decoration: none; padding: 7px 0; border-top: 1px solid var(--line); }
+  .st b { font-family: "JetBrains Mono", monospace; color: var(--ink); font-size: 15px; }
+  .st:hover { color: var(--ink); }
+  /* этап: боль слева, схема справа */
+  .step { display: grid; grid-template-columns: 360px minmax(0,1fr); gap: 32px; flex: 1; min-height: 0; }
+  .side { display: flex; flex-direction: column; gap: 16px; }
+  .pain { border-left: 5px solid var(--blue); padding: 2px 0 2px 18px; font-size: 21px; line-height: 1.34; font-weight: 700; }
+  ul.add { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+  ul.add li { border: 1px solid var(--ink); background: #fff; padding: 9px 12px; font-size: 14px; line-height: 1.35; color: var(--muted); }
+  ul.add li b { display: block; font-size: 16px; color: var(--ink); }
+  .res { font-size: 16px; line-height: 1.4; font-weight: 700; margin-top: auto; }
+  .res::before { content: "→ "; color: var(--blue); }
+  figure.c4 { position: relative; border: 1px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); background: var(--bg); min-height: 0; overflow: hidden; }
+  figure.c4 > a { position: absolute; inset: 10px; display: flex; align-items: center; justify-content: center; }
+  figure.c4 img { max-width: 100%; max-height: 100%; display: block; }
+  figure.c4.live > a { visibility: hidden; }
+  figure.c4::after { content: "LikeC4 · клик — открыть схему крупно"; position: absolute; right: 8px; bottom: 6px; font-family: "JetBrains Mono", monospace; font-size: 11px; color: var(--muted); pointer-events: none; }
+  /* уроки и финал */
+  .cards { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 22px; }
+  .card { border: 1px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); padding: 20px 22px 22px; background: var(--bg); }
+  .card.blue { border-color: var(--blue); box-shadow: 6px 6px 0 var(--blue); }
+  .card.red { border-color: var(--red); box-shadow: 6px 6px 0 var(--red); }
+  .card h3 { font-size: 23px; line-height: 1.15; letter-spacing: -.025em; margin-bottom: 9px; }
+  .card p { font-size: 17px; line-height: 1.4; color: var(--muted); }
+  .tag { display: inline-block; font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 700; letter-spacing: .08em; background: var(--ink); color: var(--bg); padding: 5px 10px; margin-bottom: 12px; }
+  .card.blue .tag { background: var(--blue); }
+  .card.red .tag { background: var(--red); }
+  .term { background: var(--ink); color: #e9e8e2; font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; font-size: 16px; line-height: 1.7; padding: 22px 26px; box-shadow: 8px 8px 0 var(--blue); white-space: pre-wrap; }
+  .term i { font-style: normal; color: #9fb0ff; }
+  .term s { text-decoration: none; color: #8b8a84; }
+  .final { display: grid; grid-template-columns: minmax(0,1fr) 520px; gap: 50px; align-items: center; height: 100%; }
+  /* навигация */
+  #nav { position: fixed; right: 18px; bottom: 16px; z-index: 40; display: flex; align-items: center; gap: 8px; background: rgba(239,238,232,.95); border: 1px solid var(--ink); padding: 5px 9px; }
+  #nav button { font: inherit; font-size: 16px; width: 26px; height: 24px; cursor: pointer; background: none; border: none; }
+  #nav .p { font-family: "JetBrains Mono", monospace; font-size: 12px; min-width: 46px; text-align: center; }
+  #bar { position: fixed; left: 0; top: 0; height: 3px; background: var(--blue); z-index: 41; transition: width .18s; }
+  /* Телефон: слайды лентой без масштаба, схема — снимком (тап открывает его для зума). */
+  @media (max-width: 700px), (orientation: portrait) and (max-width: 900px) {
+    html, body { height: auto; overflow: auto; display: block; background: var(--bg); }
+    #stage { position: static; width: auto; height: auto; transform: none !important; }
+    .slide { position: relative; inset: auto; display: flex !important; padding: 40px 18px 44px; border-bottom: 1px solid var(--line); }
+    .slide.center { padding-top: 40px; }
+    #nav, #bar { display: none; }
+    .slide > .note { padding-right: 0; }
+    h1 { font-size: 34px; } h2 { font-size: 28px; margin-bottom: 18px; }
+    .lead { font-size: 18px; }
+    .cover, .final, .step { grid-template-columns: 1fr; gap: 22px; height: auto; }
+    .photo { width: 150px; height: 150px; } .site { max-width: 260px; }
+    .phases, .cards { grid-template-columns: 1fr; gap: 16px; }
+    .pain { font-size: 18px; }
+    figure.c4 { box-shadow: 4px 4px 0 var(--ink); }
+    figure.c4 > a { position: static; padding: 8px; }
+    figure.c4::after { content: "тап — открыть схему"; position: static; display: block; padding: 0 8px 6px; text-align: right; }
+    .term { font-size: 13px; padding: 16px; }
+  }
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div id="stage">
+  <section class="slide center on" data-title="Титул">
+    <div class="cover"><div>
+      <p class="kicker">HARNESS · ЛИЧНЫЙ ИИ-КОНТУР PO</p>
+      <h1>Как рос Harness:<br>14 шагов <span class="accent">от промпта<br>до агентского центра</span></h1>
+      <p class="lead">Я не проектировал систему заранее. Каждый шаг — ответ на боль, которую надоело терпеть. Схема этапа — живая диаграмма: клик открывает её крупно.</p>
+    </div><div><img class="photo" id="coverPhoto" alt="Автор"><a class="site" href="https://aleksishmanov.ru/" target="_blank" rel="noopener"><span>aleksishmanov.ru</span><i>↗</i></a></div></div>
+  </section>
+
+  <section class="slide" data-title="Карта пути">
+    <p class="label">Карта пути</p>
+    <h2>Четыре фазы, <span class="accent">четырнадцать болей</span></h2>
+    <div class="phases"><div class="ph"><span class="tag">ОДИН НА ОДИН С LLM</span><a class="st" href="#slide=3"><b>1</b>Хочу, чтобы LLM подсказывала мне задачи на день</a><a class="st" href="#slide=4"><b>2</b>Какой-то хаос в структуре LLM — давай разложим все .md по PAF/OPS</a><a class="st" href="#slide=5"><b>3</b>Хочу, чтобы LLM сама рассказывала, что в Jira и в почте. Надоело копировать и вставлять</a></div><div class="ph"><span class="tag">ВСЁ ОБЩЕНИЕ В ОДНОМ МЕСТЕ</span><a class="st" href="#slide=6"><b>4</b>В Claude Code работать неудобно — вот бы как в Threads: чётко и удобно</a><a class="st" href="#slide=7"><b>5</b>Информации, на которую надо реагировать, всё больше. Почему бы не переключить сюда каналы, личку и всё общение?</a><a class="st" href="#slide=8"><b>6</b>Информации так много, что LLM жрёт контекст как не в себя. Надо оптимизироваться</a></div><div class="ph"><span class="tag">АГЕНТСКИЙ ЦЕНТР</span><a class="st" href="#slide=9"><b>7</b>Claude Code Desktop — топовая вещь, но в корпорации его не использовать. Надо построить единый ИИ-агентский центр</a><a class="st" href="#slide=10"><b>8</b>Прикольно: в одном центре общаюсь со всеми. Но отчёты текстом, .md и .html читать неудобно</a><a class="st" href="#slide=11"><b>9</b>Почему уходит так много токенов? 90% действий — рутина, её решают скрипты</a><a class="st" href="#slide=12"><b>10</b>Что-то много всего я уже делаю — надо настроить единый оркестратор</a></div><div class="ph"><span class="tag">ПЛАТФОРМА</span><a class="st" href="#slide=13"><b>11</b>А зачем мне вообще ноутбук? 95% рабочего времени я провожу в телефоне в Element — давай сделаем приложения</a><a class="st" href="#slide=14"><b>12</b>Слишком много тупых взаимодействий: что, кто, где лежит, что по срокам — зачем мне это делать?</a><a class="st" href="#slide=15"><b>13</b>Всё это жрёт очень много ресурсов — давай выносить на отдельный сервер</a><a class="st" href="#slide=16"><b>14</b>Если всё уже на сервере — почему до агентов нельзя достучаться из любой LLM?</a></div></div>
+    <p class="note">Слова этапов — мои реплики в тот момент, как они были. Номер ведёт на слайд этапа.</p>
+  </section>
+
+  <section class="slide" data-title="Этап 1">
+    <p class="label">Этап 1 из 14 · Один на один с LLM</p>
+    <h2>Начало: <span class="accent">промпт и модель</span></h2>
+    <div class="step">
+      <div class="side">
+        <p class="pain">«Хочу, чтобы LLM подсказывала мне задачи на день»</p>
+        <ul class="add"><li><b>Промпты</b><span>контекст дня копирую в чат руками</span></li><li><b>ZCode</b><span>кодовый агент на ноутбуке вместо чата</span></li></ul>
+        <p class="res">Работает, но каждый раз начинаю с нуля: модель ничего не помнит.</p>
+      </div>
+      <figure class="c4" data-c4-view="s01" data-c4-src="likec4/views.js"><a href="img/c4-s01.webp" target="_blank" rel="noopener"><img src="img/c4-s01.webp" loading="lazy" alt="Схема этапа 1: Начало: промпт и модель"></a></figure>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Этап 2">
+    <p class="label">Этап 2 из 14 · Один на один с LLM</p>
+    <h2>Память: <span class="accent">Cortex</span></h2>
+    <div class="step">
+      <div class="side">
+        <p class="pain">«Какой-то хаос в структуре LLM — давай разложим все .md по PAF/OPS»</p>
+        <ul class="add"><li><b>Cortex</b><span>папка .md: проекты, люди, решения по PAF/OPS</span></li><li><b>Одно устройство</b><span>агент каждый раз читает знакомую структуру</span></li></ul>
+        <p class="res">Модель помнит меня между сессиями — но данные всё ещё приношу я.</p>
+      </div>
+      <figure class="c4" data-c4-view="s02" data-c4-src="likec4/views.js"><a href="img/c4-s02.webp" target="_blank" rel="noopener"><img src="img/c4-s02.webp" loading="lazy" alt="Схема этапа 2: Память: Cortex"></a></figure>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Этап 3">
+    <p class="label">Этап 3 из 14 · Один на один с LLM</p>
+    <h2>Данные без копипаста: <span class="accent">MCP</span></h2>
+    <div class="step">
+      <div class="side">
+        <p class="pain">«Хочу, чтобы LLM сама рассказывала, что в Jira и в почте. Надоело копировать и вставлять»</p>
+        <ul class="add"><li><b>MCP Jira</b><span>задачи и статусы</span></li><li><b>MCP Confluence</b><span>страницы и требования</span></li><li><b>MCP Email</b><span>письма и приглашения</span></li></ul>
+        <p class="res">Агент сам сходит за фактами. Копипаст исчез.</p>
+      </div>
+      <figure class="c4" data-c4-view="s03" data-c4-src="likec4/views.js"><a href="img/c4-s03.webp" target="_blank" rel="noopener"><img src="img/c4-s03.webp" loading="lazy" alt="Схема этапа 3: Данные без копипаста: MCP"></a></figure>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Этап 4">
+    <p class="label">Этап 4 из 14 · Всё общение в одном месте</p>
+    <h2>Удобно, <span class="accent">как в ленте</span></h2>
+    <div class="step">
+      <div class="side">
+        <p class="pain">«В Claude Code работать неудобно — вот бы как в Threads: чётко и удобно»</p>
+        <ul class="add"><li><b>Единая лента</b><span>Mastodon + Phanpy: посты вместо простыни терминала</span></li><li><b>Comunager</b><span>мост, который кладёт события в ленту</span></li></ul>
+        <p class="res">Читаю ленту, а не вывод терминала.</p>
+      </div>
+      <figure class="c4" data-c4-view="s04" data-c4-src="likec4/views.js"><a href="img/c4-s04.webp" target="_blank" rel="noopener"><img src="img/c4-s04.webp" loading="lazy" alt="Схема этапа 4: Удобно, как в ленте"></a></figure>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Этап 5">
+    <p class="label">Этап 5 из 14 · Всё общение в одном месте</p>
+    <h2>Всё общение — <span class="accent">в одну ленту</span></h2>
+    <div class="step">
+      <div class="side">
+        <p class="pain">«Информации, на которую надо реагировать, всё больше. Почему бы не переключить сюда каналы, личку и всё общение?»</p>
+        <ul class="add"><li><b>Мосты чатов</b><span>MTS.Link, Telegram, VK, почта, Jira</span></li><li><b>Персоны</b><span>кто есть кто: люди и их роли</span></li></ul>
+        <p class="res">Одна лента вместо десятка мессенджеров.</p>
+      </div>
+      <figure class="c4" data-c4-view="s05" data-c4-src="likec4/views.js"><a href="img/c4-s05.webp" target="_blank" rel="noopener"><img src="img/c4-s05.webp" loading="lazy" alt="Схема этапа 5: Всё общение — в одну ленту"></a></figure>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Этап 6">
+    <p class="label">Этап 6 из 14 · Всё общение в одном месте</p>
+    <h2>Контекст точечно: <span class="accent">граф</span></h2>
+    <div class="step">
+      <div class="side">
+        <p class="pain">«Информации так много, что LLM жрёт контекст как не в себя. Надо оптимизироваться»</p>
+        <ul class="add"><li><b>Cortex-граф</b><span>факты и связи вместо простыни .md</span></li><li><b>Точечная выборка</b><span>агент берёт только нужный кусок</span></li></ul>
+        <p class="res">Контекст перестал раздуваться вместе с потоком.</p>
+      </div>
+      <figure class="c4" data-c4-view="s06" data-c4-src="likec4/views.js"><a href="img/c4-s06.webp" target="_blank" rel="noopener"><img src="img/c4-s06.webp" loading="lazy" alt="Схема этапа 6: Контекст точечно: граф"></a></figure>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Этап 7">
+    <p class="label">Этап 7 из 14 · Агентский центр</p>
+    <h2>Агентский центр: <span class="accent">Hermes + Matrix</span></h2>
+    <div class="step">
+      <div class="side">
+        <p class="pain">«Claude Code Desktop — топовая вещь, но в корпорации его не использовать. Надо построить единый ИИ-агентский центр»</p>
+        <ul class="add"><li><b>Hermes Agents</b><span>PO-агенты команд на сервере</span></li><li><b>Matrix + Element</b><span>комнаты: человек и агент</span></li><li><b>MCP Hub</b><span>один вход ко всем данным</span></li><li><b>Skills и контекст</b><span>навыки и общий центр контекста</span></li></ul>
+        <p class="res">Агенты живут на сервере и пишут мне в мессенджер.</p>
+      </div>
+      <figure class="c4" data-c4-view="s07" data-c4-src="likec4/views.js"><a href="img/c4-s07.webp" target="_blank" rel="noopener"><img src="img/c4-s07.webp" loading="lazy" alt="Схема этапа 7: Агентский центр: Hermes + Matrix"></a></figure>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Этап 8">
+    <p class="label">Этап 8 из 14 · Агентский центр</p>
+    <h2>Отчёты — <span class="accent">виджеты</span>, а не текст</h2>
+    <div class="step">
+      <div class="side">
+        <p class="pain">«Прикольно: в одном центре общаюсь со всеми. Но отчёты текстом, .md и .html читать неудобно»</p>
+        <ul class="add"><li><b>Виджеты Element</b><span>спринт, бизнес, OKR, лента, задачи</span></li><li><b>UI + ИИ</b><span>у каждого экрана свой агент рядом</span></li></ul>
+        <p class="res">Отчёт открывается экраном прямо в комнате.</p>
+      </div>
+      <figure class="c4" data-c4-view="s08" data-c4-src="likec4/views.js"><a href="img/c4-s08.webp" target="_blank" rel="noopener"><img src="img/c4-s08.webp" loading="lazy" alt="Схема этапа 8: Отчёты — виджеты, а не текст"></a></figure>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Этап 9">
+    <p class="label">Этап 9 из 14 · Агентский центр</p>
+    <h2>Рутина — скриптам, <span class="accent">.html — людям</span></h2>
+    <div class="step">
+      <div class="side">
+        <p class="pain">«Почему уходит так много токенов? 90% действий — рутина, её решают скрипты»</p>
+        <ul class="add"><li><b>Агенты-отчёты</b><span>блокеры, OKR, спринт, дейли, БФТ</span></li><li><b>Скрипт + ИИ</b><span>данные собирает код, модель — только выводы</span></li></ul>
+        <p class="res">Токены — на мышление, рутина — бесплатно.</p>
+      </div>
+      <figure class="c4" data-c4-view="s09" data-c4-src="likec4/views.js"><a href="img/c4-s09.webp" target="_blank" rel="noopener"><img src="img/c4-s09.webp" loading="lazy" alt="Схема этапа 9: Рутина — скриптам, .html — людям"></a></figure>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Этап 10">
+    <p class="label">Этап 10 из 14 · Агентский центр</p>
+    <h2>Один <span class="accent">оркестратор</span></h2>
+    <div class="step">
+      <div class="side">
+        <p class="pain">«Что-то много всего я уже делаю — надо настроить единый оркестратор»</p>
+        <ul class="add"><li><b>Оркестратор Harness</b><span>доска поручений агентам</span></li><li><b>Наблюдаемость</b><span>метрики, ошибки, алерты</span></li></ul>
+        <p class="res">Ставлю задачу — оркестратор раздаёт её агентам и следит.</p>
+      </div>
+      <figure class="c4" data-c4-view="s10" data-c4-src="likec4/views.js"><a href="img/c4-s10.webp" target="_blank" rel="noopener"><img src="img/c4-s10.webp" loading="lazy" alt="Схема этапа 10: Один оркестратор"></a></figure>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Этап 11">
+    <p class="label">Этап 11 из 14 · Платформа</p>
+    <h2>Ноутбук <span class="accent">не нужен</span></h2>
+    <div class="step">
+      <div class="side">
+        <p class="pain">«А зачем мне вообще ноутбук? 95% рабочего времени я провожу в телефоне в Element — давай сделаем приложения»</p>
+        <ul class="add"><li><b>Инбокс</b><span>задачи и обещания</span></li><li><b>Трекер задач</b><span>доска агентов в кармане</span></li><li><b>Календарь</b><span>встречи и ответы на приглашения</span></li></ul>
+        <p class="res">Работаю с телефона: те же виджеты — приложением.</p>
+      </div>
+      <figure class="c4" data-c4-view="s11" data-c4-src="likec4/views.js"><a href="img/c4-s11.webp" target="_blank" rel="noopener"><img src="img/c4-s11.webp" loading="lazy" alt="Схема этапа 11: Ноутбук не нужен"></a></figure>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Этап 12">
+    <p class="label">Этап 12 из 14 · Платформа</p>
+    <h2>ИИ + <span class="accent">единый центр общения</span></h2>
+    <div class="step">
+      <div class="side">
+        <p class="pain">«Слишком много тупых взаимодействий: что, кто, где лежит, что по срокам — зачем мне это делать?»</p>
+        <ul class="add"><li><b>Агент отвечает за меня</b><span>кто, что, где, к какому сроку</span></li><li><b>Одна точка</b><span>чаты, почта и агенты в одном мессенджере</span></li></ul>
+        <p class="res">Справочные вопросы закрывает агент, я — решения.</p>
+      </div>
+      <figure class="c4" data-c4-view="s12" data-c4-src="likec4/views.js"><a href="img/c4-s12.webp" target="_blank" rel="noopener"><img src="img/c4-s12.webp" loading="lazy" alt="Схема этапа 12: ИИ + единый центр общения"></a></figure>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Этап 13">
+    <p class="label">Этап 13 из 14 · Платформа</p>
+    <h2>Свой сервер <span class="accent">под защитой</span></h2>
+    <div class="step">
+      <div class="side">
+        <p class="pain">«Всё это жрёт очень много ресурсов — давай выносить на отдельный сервер»</p>
+        <ul class="add"><li><b>Authentik</b><span>один вход для людей и агентов</span></li><li><b>Harness Safeguard</b><span>сторож сервисов</span></li><li><b>Connection Safeguard</b><span>сторож соединений и мостов</span></li></ul>
+        <p class="res">Сервер живёт сам: падение поднимается, вход — один.</p>
+      </div>
+      <figure class="c4" data-c4-view="s13" data-c4-src="likec4/views.js"><a href="img/c4-s13.webp" target="_blank" rel="noopener"><img src="img/c4-s13.webp" loading="lazy" alt="Схема этапа 13: Свой сервер под защитой"></a></figure>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Этап 14">
+    <p class="label">Этап 14 из 14 · Платформа</p>
+    <h2>Harness <span class="accent">сегодня</span></h2>
+    <div class="step">
+      <div class="side">
+        <p class="pain">«Если всё уже на сервере — почему до агентов нельзя достучаться из любой LLM?»</p>
+        <ul class="add"><li><b>Hermes-Bridge</b><span>MCP + A2A: агенты доступны снаружи</span></li><li><b>Корпоративная LLM</b><span>внутренние модели для агентов</span></li><li><b>Внешняя LLM</b><span>Claude приходит через мост</span></li></ul>
+        <p class="res">Любая модель говорит с моими агентами по протоколу.</p>
+      </div>
+      <figure class="c4" data-c4-view="s14" data-c4-src="likec4/views.js"><a href="img/c4-s14.webp" target="_blank" rel="noopener"><img src="img/c4-s14.webp" loading="lazy" alt="Схема этапа 14: Harness сегодня"></a></figure>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Уроки">
+    <p class="label">Что я вынес</p>
+    <h2>Четыре правила, <span class="accent">которые сложились сами</span></h2>
+    <div class="cards">
+      <div class="card blue"><span class="tag">БОЛЬ, А НЕ ПЛАН</span><h3>Каждый шаг — ответ на конкретное неудобство</h3><p>Ни один слой не появился «на будущее». Поэтому в системе нет мёртвых частей: всё, что есть, когда-то мешало жить без него.</p></div>
+      <div class="card"><span class="tag">ТОКЕНЫ</span><h3>Мышление — модели, рутина — скриптам</h3><p>Девять действий из десяти — сбор и раскладка данных. Их делает код, модель получает готовую выжимку и думает только над выводами.</p></div>
+      <div class="card"><span class="tag">ИНТЕРФЕЙС</span><h3>Человеку — экран, а не текст</h3><p>Лента вместо терминала, виджет вместо .md, приложение на телефоне вместо ноутбука. Агент пишет туда, где я и так нахожусь.</p></div>
+      <div class="card red"><span class="tag">ПЛАТФОРМА</span><h3>Вход и наблюдаемость — до масштаба</h3><p>Как только агентов стало много, без одного входа, сторожей и метрик всё сыпалось. Сервер стал платформой, когда научился жить сам.</p></div>
+    </div>
+  </section>
+
+  <section class="slide center" data-title="Как нарисованы схемы">
+    <div class="final">
+      <div>
+        <p class="label">Как нарисованы схемы</p>
+        <h1>Одна модель —<br><span class="accent">14 видов</span></h1>
+        <p class="lead">Схемы описаны кодом в LikeC4: элементы и связи — один раз, каждый этап — вид с нужным срезом. Поменял модель — все 14 схем перерисовались сами.</p>
+        <p class="note">Исходник — <span class="mono">harness-evolution/likec4/harness.c4</span>, сборка — <span class="mono">node tools/build_likec4.mjs harness-evolution</span>.</p>
+      </div>
+      <div class="term"><s>// элемент описан один раз</s>
+<i>hermes</i> = agent 'Hermes Agents'
+<i>bridge</i> = service 'Hermes-Bridge'
+<i>bridge</i> -> <i>hermes</i> 'A2A'
+
+<s>// этап — это вид, срез модели</s>
+view s14 {
+  title '14 · Harness сегодня'
+  include po, harness.*, llmExt
+}</div>
+    </div>
+  </section>
+</div>
+<div id="nav">
+  <button id="prev" title="Назад">‹</button><span class="p mono" id="pos"></span><button id="next" title="Вперёд">›</button>
+</div>
+<script>
+  var PHOTO = "/okr-quarter-planning/img/photo.webp";
+  var slides = [].slice.call(document.querySelectorAll('.slide'));
+  var cur = 0;
+  var narrow = window.matchMedia('(max-width: 700px), (orientation: portrait) and (max-width: 900px)');
+  function fit() {
+    var st = document.getElementById('stage');
+    if (narrow.matches) { st.style.transform = 'none'; st.style.left = st.style.top = ''; return; }
+    var w = document.documentElement.clientWidth, h = document.documentElement.clientHeight;
+    var s = Math.min(w / 1280, h / 720);
+    st.style.left = Math.round((w - 1280 * s) / 2) + 'px';
+    st.style.top = Math.round((h - 720 * s) / 2) + 'px';
+    st.style.transform = 'scale(' + s + ')';
+  }
+  window.addEventListener('resize', fit); fit();
+  function show(i, push) {
+    cur = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach(function (s, k) { s.classList.toggle('on', k === cur); });
+    document.getElementById('pos').textContent = (cur + 1) + ' / ' + slides.length;
+    document.getElementById('bar').style.width = ((cur + 1) / slides.length * 100) + '%';
+    if (push !== false) history.replaceState(null, '', '#slide=' + (cur + 1));
+    else if (narrow.matches && cur > 0) slides[cur].scrollIntoView();
+  }
+  window.addEventListener('load', function () { if (narrow.matches && cur > 0) slides[cur].scrollIntoView(); });
+  document.getElementById('prev').onclick = function () { show(cur - 1); };
+  document.getElementById('next').onclick = function () { show(cur + 1); };
+  var photo = document.getElementById('coverPhoto');
+  if (photo && PHOTO) photo.src = PHOTO;
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); show(cur + 1); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); show(cur - 1); }
+    if (e.key === 'Home') { e.preventDefault(); show(0); }
+    if (e.key === 'End') { e.preventDefault(); show(slides.length - 1); }
+  });
+  function fromHash() { var m = location.hash.match(/slide=(\d+)/); return m ? parseInt(m[1], 10) - 1 : 0; }
+  window.addEventListener('hashchange', function () { show(fromHash(), false); });
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  show(fromHash(), false);
+</script>
+<script src="/components/likec4.js" defer></script>
+<script src="/catalog.js" defer></script>
+<script src="/components/related.js" defer></script>
+</body>
+</html>
