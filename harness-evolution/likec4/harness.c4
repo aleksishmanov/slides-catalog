@@ -1,0 +1,223 @@
+// Эволюция Harness: одна модель, по виду на этап. Исходник диаграмм колоды harness-evolution.
+// Сборка: tools/build_likec4.sh harness-evolution → harness-evolution/likec4/views.js
+specification {
+  // палитра каталога: чёрный, синий, красный, серый (styles колоды)
+  color ink #080808
+  color brand #2437ed
+  color warm #d8302a
+  color stone #6b6a64
+  color leaf #1f7a3a
+
+  element actor {
+    style { shape person; color brand; size sm; textSize lg }
+  }
+  element llm {
+    style { color warm; size sm; textSize lg }
+  }
+  element tool {
+    style { color ink; size sm; textSize lg }
+  }
+  element store {
+    style { shape storage; color stone; size sm; textSize lg }
+  }
+  element source {
+    style { color stone; size sm; textSize lg }
+  }
+  element service {
+    style { color brand; size sm; textSize lg }
+  }
+  element agent {
+    style { color ink; size sm; textSize lg }
+  }
+  element ui {
+    style { shape browser; color leaf; size sm; textSize lg }
+  }
+  element boundary {
+    style { color stone; opacity 6% }
+  }
+}
+
+model {
+  po = actor 'Руководитель продукта' 'Я: задачи, команды, общение'
+
+  llm = llm 'LLM' 'Модель: подсказывает и делает'
+  llmCorp = llm 'Корпоративная LLM' 'Модель внутри компании'
+  llmExt = llm 'Внешняя LLM' 'Claude и другие модели снаружи'
+
+  prompts = tool 'Промпты' 'Копировать — вставить'
+  zcode = tool 'ZCode' 'Кодовый агент на компьютере'
+
+  cortex = store 'Cortex' '.md-память по PAF/OPS'
+  cortexGraph = store 'Cortex-граф' 'Граф фактов вместо простыни .md'
+
+  mcpJira = tool 'MCP Jira'
+  mcpConf = tool 'MCP Confluence'
+  mcpMail = tool 'MCP Email'
+
+  jira = source 'Jira'
+  confluence = source 'Confluence'
+  email = source 'Почта'
+  mtslink = source 'MTS.Link'
+  telegram = source 'Telegram'
+  vk = source 'VK'
+
+  feed = service 'Единая лента' 'Mastodon + Phanpy'
+  comunager = service 'Comunager' 'Мосты чатов + персоны людей'
+
+  harness = boundary 'Harness · сервер' 'Всё живёт на одном сервере' {
+    mcpHub = service 'MCP Hub' 'Один вход ко всем данным'
+    skills = tool 'Skills' 'Навыки агентов'
+    context = store 'Центр контекста' 'Единое управление контекстом'
+    hermes = agent 'Hermes Agents' 'PO-агенты команд A, B, C'
+    matrix = ui 'Matrix + Element' 'Комнаты: человек и агент'
+    widgets = ui 'Виджеты Element' 'Спринт, бизнес, OKR, лента, задачи'
+    reports = agent 'Агенты-отчёты' 'Блокеры, OKR, спринт, дейли, БФТ'
+    orchestrator = agent 'Оркестратор Harness' 'Доска поручений агентам'
+    phone = ui 'Приложения на телефоне' 'Инбокс, задачи, календарь'
+    guard = service 'Safeguard' 'Сторож сервисов и соединений'
+    authentik = service 'Authentik' 'Один вход для людей и агентов'
+    bridge = service 'Hermes-Bridge' 'MCP + A2A наружу'
+  }
+  obs = service 'Наблюдаемость' 'Метрики, ошибки, алерты'
+
+  // этапы 1–2: модель, промпты, память
+  po -> prompts 'пишет'
+  prompts -> llm 'контекст вручную'
+  po -> zcode 'работает'
+  zcode -> llm
+  zcode -> cortex 'читает и пишет'
+  cortex -> llm 'контекст'
+
+  // этап 3: MCP
+  zcode -> mcpJira
+  zcode -> mcpConf
+  zcode -> mcpMail
+  mcpJira -> jira
+  mcpConf -> confluence
+  mcpMail -> email
+
+  // этапы 4–6: лента и мосты
+  zcode -> feed 'читает ленту'
+  feed -> comunager
+  comunager -> jira
+  comunager -> email
+  comunager -> confluence
+  comunager -> mtslink
+  comunager -> telegram
+  comunager -> vk
+  zcode -> cortexGraph 'точечный контекст'
+  cortexGraph -> llm
+
+  // этап 7+: агенты на сервере
+  mcpHub -> comunager 'API'
+  mcpHub -> feed 'API'
+  mcpHub -> jira
+  mcpHub -> confluence
+  mcpHub -> email
+  skills -> hermes
+  mcpHub -> hermes
+  context -> hermes
+  hermes -> llm
+  hermes -> matrix 'пишет в комнаты'
+  comunager -> matrix 'чаты комнатами'
+  po -> matrix 'общается'
+  widgets -> matrix 'встроены'
+  po -> widgets 'смотрит'
+  reports -> widgets '.html-отчёты'
+  reports -> mcpHub
+  orchestrator -> hermes 'поручения'
+  orchestrator -> reports
+  po -> orchestrator 'ставит задачу'
+  obs -> harness 'следит' {
+    style { line dotted }
+  }
+  po -> phone 'с телефона'
+  phone -> matrix
+  phone -> widgets
+  authentik -> widgets 'вход'
+  authentik -> matrix 'вход'
+  guard -> hermes 'перезапуск'
+  guard -> comunager
+  llmExt -> bridge 'MCP'
+  bridge -> hermes 'A2A'
+  bridge -> mcpHub
+  hermes -> llmCorp
+}
+
+views {
+  style * { }
+
+  view s01 {
+    title '1 · LLM подсказывает задачи'
+    include po, prompts, llm
+    include po -> prompts, prompts -> llm
+    autoLayout LeftRight 60 30
+  }
+  view s02 {
+    title '2 · Порядок в памяти: Cortex'
+    include po, zcode, cortex, llm
+    autoLayout LeftRight 60 30
+  }
+  view s03 {
+    title '3 · Данные без копипаста: MCP'
+    include po, zcode, cortex, llm, mcpJira, mcpConf, mcpMail, jira, confluence, email
+    autoLayout LeftRight 60 30
+  }
+  view s04 {
+    title '4 · Удобно, как в ленте'
+    include po, zcode, cortex, llm, mcpJira, mcpConf, mcpMail, feed, comunager, jira, confluence, email
+    autoLayout LeftRight 60 30
+  }
+  view s05 {
+    title '5 · Всё общение — в одну ленту'
+    include zcode, llm, cortex, feed, comunager, jira, confluence, email, mtslink, telegram, vk
+    autoLayout LeftRight 60 30
+  }
+  view s06 {
+    title '6 · Контекст точечно: граф'
+    include zcode, llm, cortexGraph, feed, comunager, mtslink, telegram, vk
+    autoLayout LeftRight 60 30
+  }
+  view s07 {
+    title '7 · Агентский центр: Hermes + Matrix'
+    include po, harness, harness.mcpHub, harness.skills, harness.context, harness.hermes, harness.matrix, llm, comunager, feed, telegram, mtslink
+    exclude harness.widgets, harness.reports, harness.orchestrator, harness.phone, harness.guard, harness.authentik, harness.bridge
+    autoLayout TopBottom 50 40
+  }
+  view s08 {
+    title '8 · Отчёты — виджеты, а не текст'
+    include po, harness, harness.mcpHub, harness.skills, harness.context, harness.hermes, harness.matrix, harness.widgets, llm, comunager
+    autoLayout TopBottom 50 40
+  }
+  view s09 {
+    title '9 · Рутина — скриптам, .html — людям'
+    include po, harness, harness.mcpHub, harness.hermes, harness.matrix, harness.widgets, harness.reports, llm
+    autoLayout TopBottom 50 40
+  }
+  view s10 {
+    title '10 · Один оркестратор'
+    include po, harness, harness.orchestrator, harness.hermes, harness.reports, harness.matrix, harness.widgets, harness.mcpHub, obs
+    autoLayout LeftRight 60 30
+  }
+  view s11 {
+    title '11 · Ноутбук не нужен'
+    include po, harness, harness.phone, harness.matrix, harness.widgets, harness.hermes, harness.orchestrator
+    autoLayout LeftRight 60 30
+  }
+  view s12 {
+    title '12 · Один центр общения'
+    include po, harness, harness.matrix, harness.hermes, harness.orchestrator, comunager, telegram, mtslink, email
+    autoLayout LeftRight 60 30
+  }
+  view s13 {
+    title '13 · Отдельный сервер под защитой'
+    include po, harness, harness.authentik, harness.guard, harness.matrix, harness.widgets, harness.hermes, comunager, obs
+    autoLayout TopBottom 50 40
+  }
+  view s14 {
+    title '14 · Harness сегодня'
+    include po, llmExt, llmCorp, harness, harness.*, comunager, obs, telegram, mtslink
+    exclude harness.reports, harness.phone
+    autoLayout TopBottom 50 40
+  }
+}
